@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { TextInput, Button } from "react-native";
+import {SegmentedButtons} from "react-native-paper";
+
+
 
 export default function StepIndicator() {
   const [step, setStep] = useState(0);
   const stepWidth = 30; 
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    university: "",
+    gender: "",
+    role: "",
+  });
 
   const animatedWidth = useSharedValue(stepWidth);
   const backButtonOpacity=useSharedValue(0);
@@ -33,6 +45,67 @@ export default function StepIndicator() {
   };
 
 
+
+  const handleInputChange = (key:string, value:string) => {
+    setFormData({ ...formData, [key]: value });
+  };
+  
+  const buttons: { value: string; label: string }[] = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+  ];
+
+  const stepFunction = (step:any) => {
+    switch(step){
+      case 0 : 
+      return(
+      <View style={{gap:15}}>
+      <Text style = {styles.FirstContainer}> Register</Text>
+     
+      <TextInput placeholder="User Name" value={formData.name} onChangeText={(text) => handleInputChange('name',text)} style = {styles.input} />
+      
+      <TextInput placeholder="Email" value={formData.email} onChangeText={(text) => handleInputChange('email',text)} style = {styles.input} />
+     
+      <TextInput placeholder="Phone Number" value={formData.phone} onChangeText={(text) => handleInputChange('phone',text)} style = {styles.input} />
+
+      </View>
+      );
+      case 1:
+      return(
+      <View style={{gap:15}}>
+      <Text style = {styles.FirstContainer}> Register</Text>
+
+      <TextInput placeholder="University" value={formData.university} onChangeText={(text) => handleInputChange('university',text)} style = {styles.input} />
+      <Text style={{textAlign:"center",fontWeight:"bold",fontSize:20}}>Gender</Text>
+      <SegmentedButtons
+        value={formData.gender}
+        onValueChange={(value) => handleInputChange("gender", value)}
+        buttons={buttons}
+        style = {styles.segmentButton}
+      />
+       </View>
+      );
+
+      case 2:
+        return(
+          <>
+            <Text style= {{textAlign: "center",fontSize:20,fontWeight:"bold"}}>Preferred Role:</Text>
+            
+            <Pressable onPress={() => handleInputChange('role', 'Driver')} style={[styles.roleButton, formData.role === 'Driver' && styles.selectedRole,styles.PressableButton]}>
+              <Text>Driver</Text>
+            </Pressable>
+            <Pressable onPress={() => handleInputChange('role', 'Passenger')} style={[styles.roleButton, formData.role === 'Passenger' && styles.selectedRole,styles.PressableButton]}>
+              <Text>Passenger</Text>
+            </Pressable>
+            <Text style={styles.disclaimer}>* You can change this later</Text>
+           
+          </>
+        );
+          
+    }
+    
+}
+
   const animatedIndicatorStyle = useAnimatedStyle(() => ({
     width: animatedWidth.value,
   }));
@@ -43,12 +116,11 @@ export default function StepIndicator() {
   return (
     <View style={styles.container}>
       
-    {/* we need to add forms here
-      for state step 1:Name email number
-      for state step 2:Uni gender 
-      for state step 3:Preferred role (driver/passenger)(also add disclaimer-can be changed later)
-
-    */}
+    {
+      <View style = {styles.formContainer}>
+      {stepFunction(step)}
+      </View>
+    }
 
       <View style={styles.stepContainer}>
         <Animated.View style={[styles.greenIndicator, animatedIndicatorStyle]} />
@@ -57,13 +129,14 @@ export default function StepIndicator() {
         <View style={[styles.circle,{backgroundColor:step===2?'white':'#dedede'}]} />
       </View>
 
+    
       <View style={styles.buttonRow}>
         {step>0 && (<Animated.View style={animatedBackBtnStyle}><Pressable style={styles.backButton} onPress={prevStep}>
           <Text style={{color:"black",fontWeight:"bold"}}>Back</Text>
         </Pressable></Animated.View>)}
 
         <Pressable style={styles.continueButton} onPress={nextStep}>
-          <Text style={styles.buttonText}>{step<2?'Continue':'Finish'}</Text>
+          <Text style={styles.buttonText}>{step<2?'Continue':'Submit'}</Text>
         </Pressable>
       </View>
     </View>
@@ -77,11 +150,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "black",
   },
+  FirstContainer:{
+    textAlign: "center",fontSize:30,fontWeight:"bold",
+  
+  },
   stepContainer: {
     flexDirection: "row",
     alignItems: "center",
     position: "relative",
-    marginBottom: 40,
+    marginBottom: 0,
+
   },
   greenIndicator: {
     height: 10,
@@ -101,6 +179,7 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: "row",
     gap: 20,
+    marginTop:80,
   },
   backButton: {
     backgroundColor: "#c4b5fd",
@@ -121,4 +200,59 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  label: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 15,
+    padding:10,
+    textAlign:"center"
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    
+  },
+
+  error: {
+    color: "red",
+    marginBottom: 10,
+  },
+
+
+  formContainer:{
+    backgroundColor:"white",
+    marginBottom:80,
+    width:300,
+    borderRadius:8,
+    padding:50,
+    paddingBottom:150,
+    
+  },
+
+  disclaimer: { color: "grey", marginTop: 10, textAlign: "center",fontStyle:"italic"},
+  roleButton: {padding: 10, marginVertical: 15, borderRadius: 10, backgroundColor: "#e0e0e0", width: "80%", alignItems: "center" },
+  selectedRole: {padding:10, backgroundColor: "#E6E6FA" },
+
+  segmentButton:{
+    justifyContent: "center",
+    marginVertical: 10,
+    width: "100%",
+    
+  },
+
+  PressableButton:{
+  justifyContent: "center",
+    marginVertical: 10,
+    width: "90%", 
+    height: 60,
+}
+
 });
+
+function setError(arg0: string) {
+  throw new Error("Function not implemented.");
+}
