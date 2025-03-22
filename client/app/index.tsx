@@ -3,9 +3,8 @@ import { View, Text, Pressable, StyleSheet, TextInput } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { SegmentedButtons } from "react-native-paper";
 import DriverSVG from "../assets/images/driver-light.svg";
-
-
 import PassengerSVG from "../assets/images/passenger.svg";
+
 
 interface FormData {
   name: string;
@@ -70,13 +69,22 @@ export default function StepIndicator() {
             <TextInput placeholder="University" value={formData.university} onChangeText={(text) => handleInputChange("university", text)} style={styles.input} />
 
             <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 20 }}>Gender</Text>
+           
+            <View style={styles.segmentContainer}> 
             <SegmentedButtons
-              value={formData.gender}
-              onValueChange={(value) => handleInputChange("gender", value)}
-              buttons={buttons}
-              style={styles.segmentButton}
-            />
+            value={formData.gender}
+            onValueChange={(value) => handleInputChange("gender", value)}
+            buttons={buttons.map((button) => ({
+              ...button,
+              style: formData.gender === button.value ? styles.selectedButton : styles.buttonStyle,
+              labelStyle: formData.gender === button.value ? styles.selectedLabel : styles.defaultLabel,
+            }))}
+            style={styles.segmentButton}
+          />
+            </View>
+
           </View>
+         
         )}
 
         {step === 2 && (
@@ -133,11 +141,14 @@ const styles = StyleSheet.create({
   backButton: { backgroundColor: "#c4b5fd", padding: 15, borderRadius: 22, paddingHorizontal: 25 },
   continueButton: { backgroundColor: "#5328e8", display: "flex", alignItems: "center", padding: 15, borderRadius: 22, width: "60%", textAlign: "center" },
   buttonText: { color: "white", fontWeight: "bold" },
-  input: { height: 40, borderColor: "black", color: "black", borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, marginBottom: 10 },
+  input: { height: 40, borderColor: "#5328e8", color: "black", borderWidth: 2, borderRadius: 8, paddingHorizontal: 10, marginBottom: 10 },
   formContainer: { backgroundColor: "", width: 300, borderRadius: 8, padding: 50, },
   disclaimer: { color: "grey", marginTop: 10, textAlign: "center", fontStyle: "italic" },
   roleContainer: {borderRadius: 5,backgroundColor: '#c4b5fd',display: "flex",alignItems: "center",justifyContent: "center",width: 200,height: 200,},
-
-
-
+  segmentButton: {borderWidth: 3,borderColor: "#5328e8",borderRadius: 25,overflow: "hidden",width: 230,},
+  buttonStyle: {flex: 1,alignItems: "center",justifyContent: "center",borderWidth: 0.2,backgroundColor: "white",},
+  selectedButton: {backgroundColor: "#5328e8", flex: 1,alignItems: "center",justifyContent: "center",},
+  selectedLabel: {color: "#FFFFFF", fontWeight: "bold",textAlign: "center",},
+  defaultLabel: {  textAlign: "center",},
+  segmentContainer: {alignItems: "center", justifyContent: "center", width: "100%",},
 });
