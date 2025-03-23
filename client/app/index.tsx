@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Pressable, StyleSheet, TextInput } from "react-native";
+import { View, Text, Pressable, StyleSheet, TextInput ,SafeAreaView} from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { SegmentedButtons } from "react-native-paper";
 import DriverSVG from "../assets/images/driver-light.svg";
 import PassengerSVG from "../assets/images/passenger.svg";
 
-
+import useLoadFonts from "../hooks/useLoadFonts";
 interface FormData {
   name: string;
   email: string;
@@ -18,6 +18,7 @@ interface FormData {
 export default function StepIndicator() {
   const [step, setStep] = useState<number>(0);
   const stepWidth: number = 30;
+  const fontsLoaded = useLoadFonts();
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -52,7 +53,8 @@ export default function StepIndicator() {
   const animatedBackBtnStyle = useAnimatedStyle(() => ({ opacity: backButtonOpacity.value, transform: [{ translateX: backButtonX.value }] }));
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Text style={{color:"white",fontSize:80,fontWeight:"heavy",fontFamily:"Vercetti",marginLeft:10}}>SeatLo</Text>
       <View style={styles.formContainer}>
         {step === 0 && (
           <View style={{ gap: 15 }}>
@@ -91,13 +93,13 @@ export default function StepIndicator() {
           <>
             <Text style={{ textAlign: "center", fontSize: 20, fontWeight: "bold" }}>Preferred Role:</Text>
             <Pressable onPress={() => handleInputChange("role", "Driver")} style={[styles.roleContainer, {
-              borderColor: formData.role === "Driver" ? "#5328e8" : "gray"
+              borderColor: formData.role === "Driver" ? "#5328e8" : "#a6a6a6"
             }]}>
               <DriverSVG width={240} height={240} />
 
             </Pressable>
             <Text>OR</Text>
-            <Pressable onPress={() => handleInputChange("role", "Passenger")} style={[styles.roleContainer, { borderColor: formData.role === "Passenger" ? "#5328e8" : "gray" }]}>
+            <Pressable onPress={() => handleInputChange("role", "Passenger")} style={[styles.roleContainer, { borderColor: formData.role === "Passenger" ? "#5328e8" : "#a6a6a6" }]}>
 
               <PassengerSVG width={200} height={200} />
 
@@ -105,14 +107,12 @@ export default function StepIndicator() {
             <Text style={styles.disclaimer}>* You can change this later</Text>
           </>
         )}
-      </View>
-
-      <View style={styles.stepContainer}>
+        {/* <View style={styles.stepContainer}>
         <Animated.View style={[styles.greenIndicator, animatedIndicatorStyle]} />
         <View style={[styles.circle, { backgroundColor: "white" }]} />
         <View style={[styles.circle, { backgroundColor: step >= 1 ? "white" : "#dedede" }]} />
         <View style={[styles.circle, { backgroundColor: step === 2 ? "white" : "#dedede" }]} />
-      </View>
+      </View> */}
 
       <View style={styles.buttonRow}>
         {step > 0 && (
@@ -127,26 +127,29 @@ export default function StepIndicator() {
           <Text style={styles.buttonText}>{step < 2 ? "Continue" : "Submit"}</Text>
         </Pressable>
       </View>
-    </View>
+      </View>
+
+      
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fffff" },
+  container: { flex: 1, backgroundColor: "#5328e8"},
   formHeading: { textAlign: "center", fontSize: 30, fontWeight: "bold", color: 'black' },
   stepContainer: { flexDirection: "row", alignItems: "center", position: "relative", marginBottom: 0 },
   greenIndicator: { height: 10, width: 5, backgroundColor: "#2fd52d", borderRadius: 15, position: "absolute", left: 0, paddingVertical: 15 },
   circle: { width: 10, height: 10, borderRadius: 5, marginHorizontal: 10 },
-  buttonRow: { flexDirection: "row", gap: 20, marginTop: 80 },
+  buttonRow: { flexDirection: "row", gap: 20, marginTop: 80, },
   backButton: { backgroundColor: "#c4b5fd", padding: 15, borderRadius: 22, paddingHorizontal: 25 },
   continueButton: { backgroundColor: "#5328e8", display: "flex", alignItems: "center", padding: 15, borderRadius: 22, width: "60%", textAlign: "center" },
   buttonText: { color: "white", fontWeight: "bold" },
   input: { height: 40, borderColor: "#5328e8", color: "black", borderWidth: 2, borderRadius: 8, paddingHorizontal: 10, marginBottom: 10 },
-  formContainer: { backgroundColor: "", width: 300, borderRadius: 8, padding: 50, },
+  formContainer: { backgroundColor: "#eeeafd", width: '100%',height:700, borderRadius: 8, padding: 50,borderTopRightRadius:50,borderTopLeftRadius:50 ,position:"absolute",bottom:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'},
   disclaimer: { color: "grey", marginTop: 10, textAlign: "center", fontStyle: "italic" },
-  roleContainer: {borderRadius: 5,backgroundColor: '#c4b5fd',display: "flex",alignItems: "center",justifyContent: "center",width: 200,height: 200,},
+  roleContainer: {borderRadius: 5,backgroundColor: '#c4b5fd',display: "flex",alignItems: "center",justifyContent: "center",width: 200,height: 200,borderWidth:2},
   segmentButton: {borderWidth: 3,borderColor: "#5328e8",borderRadius: 25,overflow: "hidden",width: 230,},
-  buttonStyle: {flex: 1,alignItems: "center",justifyContent: "center",borderWidth: 0.2,backgroundColor: "white",},
+  buttonStyle: {flex: 1,alignItems: "center",justifyContent: "center",borderWidth: 0.2,backgroundColor: "white"},
   selectedButton: {backgroundColor: "#5328e8", flex: 1,alignItems: "center",justifyContent: "center",},
   selectedLabel: {color: "#FFFFFF", fontWeight: "bold",textAlign: "center",},
   defaultLabel: {  textAlign: "center",},
