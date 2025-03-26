@@ -1,91 +1,132 @@
-import { View, Text ,StyleSheet,ScrollView} from 'react-native'
-import React ,{useRef} from 'react'
-import { SafeAreaView} from 'react-native-safe-area-context'
-import RidesBS from '@/components/RidesBS'
-import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler'
-import BottomSheet from '@gorhom/bottom-sheet'
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
-//TODO
-//we want this page to have
-//tab three dots at top right
-//location and name in the middle 
-//maps in  between
-//available rides
-//some way of switching to host a ride
-
-
-const Home = () => {
-
-  const bottomSheetRef=useRef<BottomSheet>(null);
-  const openBottomSheet=()=>bottomSheetRef.current?.expand();
-
+import { View, Text, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import RidesBS from '@/components/RidesBS';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { PaperProvider, IconButton, Menu } from 'react-native-paper';
+import RideItems from '@/components/RideItem';
+// TODO
+// We want this page to have:
+// - Tab with three dots at the top right
+// - Location and name in the middle
+// - Map in between
+// - Available rides
+// - Some way of switching to host a ride
+const HamburgerMenu = () => {
+  const [visible, setVisible] = useState(false);
 
   return (
-    <GestureHandlerRootView >
-      <SafeAreaView style={styles.container}>
-        {
-        /* tabs view ignore for now 
-         <View>
-         </View>
-        */
+    <View>
+      <Menu
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        anchor={
+          <IconButton icon="menu" size={24} onPress={() => setVisible(true)} />
         }
-       
+      >
+        <Menu.Item onPress={() => console.log('option1 clicked')} title="Option 1" />
+        <Menu.Item onPress={() => console.log('option2 clicked')} title="Option 2" />
+        <Menu.Item onPress={() => console.log('option3 clicked')} title="Option 3" />
+      </Menu>
+    </View>
+  );
+};
 
-        {/* name and location container:*/}
-        <View>
-          <Text style={styles.textColor}>
-            Welcome User (we don’t know your name)
-          </Text>
-        </View>
+const rides = [
+  {id: 1, name: 'Umer Nadeem', rating: 5, location: 'GC', car: 'Alto',additionalDetails: 'Reliable driver with excellent service' },
+  { id: 2, name: 'Abdurrahman Amir', rating: 4, location: 'Mochi Morh', car: 'Prius',additionalDetails: 'Comfortable ride with smooth driving' },
+  { id: 3, name: 'Ali Murtaza', rating: 5, location: 'Gabol Colony', car: 'Vitz',additionalDetails: 'Friendly driver, always on time' },
+];
 
-        {/* --------------TODO---------------- 
-          -make a hardcoded array of object(since no backend)with ride details(driver name,location,rating everything you can see of)
-          -small pressables will appear with brief info(on clicking them a bottom sheet will appear with full info)
-          Multiple Pressables are needed so:
-          1)Make a reusable component in the component folder
-         <Pressable style={{backgroundColor:'white',padding:10,borderRadius:40,width:'80%'}} onPress={openBottomSheet}><Text style={{color:'black'}}>Umer Nadeem 5* GC</Text></Pressable>
-          send brief info like name,rating,location through props into this component(not all info)
-          then import this component into this file and make multiple instances(map the array with brief info into it)
-         
-          2)RideBS IS A COMPONENT IN COMPONENTS FOLDER
-           USE MAP FUNCTION TO SEND all info AS PROPS INTO THE RIDEBS(make a varibale with mapped components)
-          place this mapped component array under the pressables
-          3)now see task in ridebs.tsx
-        */}
-    
-
-
-
-          {/* current rides near you displayed */}
-        <View >
-          <View>
-            {/* headings and AutoBooking button here */}
-          </View>
-
-              <Pressable style={{backgroundColor:'white',padding:10,borderRadius:40,width:'80%'}} onPress={openBottomSheet}><Text style={{color:'black'}}>Umer Nadeem 5* GC(Press me)</Text></Pressable>
-  <RidesBS ref={bottomSheetRef} name="Umer Nadeem" />
-
-        </View>
-
-        {/* A switch modes button */}
-        {/* <View></View> */}
-      </SafeAreaView>
-     </GestureHandlerRootView>
-  )
+interface Ride {
+  id: number;
+  name: string;
+  rating: number;
+  location: string;
+  car: string;
+  additionalDetails?: string;
 }
 
+const Home = () => {
+  const bottomSheetRef = useRef(null);
+  const [selectedRide, setSelectedRide] = useState<Ride|null>(null);
 
-export default Home
+  const openBottomSheet = (ride:Ride) => {
+    setSelectedRide(ride);
+    setTimeout(() => {
+      (bottomSheetRef.current as any)?.expand(); // Use type assertion
+    }, 100);
+  };
+
+  return (
+    <GestureHandlerRootView style={{flex: 1}}>
+      <PaperProvider>
+        <SafeAreaView style={styles.container}>
+          <HamburgerMenu />
+
+          <View>
+            <Text style={styles.textColor}>Welcome User</Text>
+          </View>
+        {/* --------------TODO---------------- 
+          - Make a hardcoded array of objects (since no backend) with ride details
+            (driver name, location, rating, everything you can see)
+          
+          - Small pressables will appear with brief info (on clicking them, a bottom sheet will appear with full info)
+          
+          Multiple Pressables are needed, so:
+          1) Make a reusable component in the components folder
+             <Pressable style={{backgroundColor:'white',padding:10,borderRadius:40,width:'80%'}} onPress={openBottomSheet}><Text style={{color:'black'}}>Umer Nadeem 5* GC</Text></Pressable>
+             Send brief info like name, rating, location through props into this component (not all info)
+             Then import this component into this file and make multiple instances (map the array with brief info into it)
+         
+          2) RideBS is a component in the components folder
+             Use map function to send all info as props into RideBS (make a variable with mapped components)
+             Place this mapped component array under the pressables
+          
+          3) Now see tasks in RidesBS.tsx
+          */}
+
+          <View style={styles.ridesContainer}>
+            {rides.map((ride) => (
+              <RideItems 
+                key={ride.id} 
+                id={ride.id} 
+                name={ride.name} 
+                location={ride.location} 
+                onPress={() => openBottomSheet(ride)} 
+              />
+            ))}
+          </View>
+
+           {/* Bottom Sheet for Ride Details */}
+           <RidesBS ref={bottomSheetRef} ride={selectedRide} />
+
+          {/* A switch modes button */}
+          {/* <View></View> */}
+        </SafeAreaView>
+      </PaperProvider>
+    </GestureHandlerRootView>
+  );
+};
+
+export default Home;
+
 const styles = StyleSheet.create({
-container:{
-  backgroundColor:'#141414',flex:1,
-  display:'flex',
-  flexDirection:'column',
-  justifyContent:'space-between',
-  alignItems:'center'
-},
-textColor:{color:"white"}
-
-})
-
-
+  container: {
+    backgroundColor: '#141414',
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textColor: {
+    color: 'white',
+  },
+  ridesContainer: {
+    width: '100%',
+    gap: 10,
+    paddingHorizontal: 20,
+  },
+});

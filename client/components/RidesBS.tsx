@@ -1,66 +1,93 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React, { forwardRef, useCallback } from 'react'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { View, Text, StyleSheet } from 'react-native';
+import React, { forwardRef, useCallback, useMemo } from 'react';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+
+interface RiderDetails {
+  name: string;
+  rating: number;
+  location: string;
+  car: string;
+  additionalDetails?: string;
+}
 
 interface Props {
-    name: string,
-
+  ride: RiderDetails | null;
 }
-type Ref = BottomSheetMethods;
 
-const RidesBS = forwardRef<Ref, Props>((props, ref) => {
+const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
+  // Define the snap points
+  const snapPoints = useMemo(() => ['50%', '95%'], []);
 
-    const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
-    }, []);
+  // Callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log('BottomSheet index changed:', index);
+  }, []);
 
-
-    return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <BottomSheet
-                ref={ref}
-                index={-1}
-                snapPoints={['95%']}
-                enablePanDownToClose={true}
-                onChange={handleSheetChanges}
-                handleIndicatorStyle={{ backgroundColor: 'black' }}
-                backgroundStyle={{ backgroundColor: "white" }}
-
-
-            >
-                <BottomSheetView style={styles.contentContainer}><Text style={{ color: "white" }}>
-     {/* --------------TODO---------------- 
-        we need to add multiple containers(views) here to create this:
-        https://cdn.dribbble.com/userupload/15085517/file/original-0bfe38c1141385f18dc358ff7077ea36.jpg?resize=752x&vertical=center
-        (the middle picture with ride and rider details) 
-        no styling needed just try to replicate the loose structure
-        all info from props
-        */}
-                    {props.name}</Text></BottomSheetView>
-            </BottomSheet>
-
-
-        </GestureHandlerRootView>
-    )
-})
-const styles = StyleSheet.create({
-    contentContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 36,
-        alignItems: 'center',
-        width: '100%'
-    },
-    button: {
-        backgroundColor: 'green',
-        padding: 10,
-        borderRadius: 5,
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
-    }
+  // Render
+  return (
+    <BottomSheet
+      ref={ref}
+      index={-1}
+      snapPoints={snapPoints}
+      onChange={handleSheetChanges}
+      enablePanDownToClose={true}
+      backgroundStyle={{ backgroundColor: 'white' }}
+      handleIndicatorStyle={{ backgroundColor: 'gray' }}
+    >
+      <BottomSheetView style={styles.contentContainer}>
+        {/* --------------TODO---------------- 
+          we need to add multiple containers(views) here to create this:
+          https://cdn.dribbble.com/userupload/15085517/file/original-0bfe38c1141385f18dc358ff7077ea36.jpg?resize=752x&vertical=center
+          (the middle picture with ride and rider details) 
+          no styling needed just try to replicate the loose structure
+          all info from props
+          */}
+        {ride ? (
+          <>
+            <Text style={styles.titleText}>{ride.name}</Text>
+            <Text style={styles.subtitleText}>Rating: {ride.rating} ★</Text>
+            <Text style={styles.infoText}>Location: {ride.location}</Text>
+            <Text style={styles.infoText}>Car: {ride.car}</Text>
+            {ride.additionalDetails && (
+              <Text style={styles.detailsText}>{ride.additionalDetails}</Text>
+            )}
+          </>
+        ) : (
+          <Text style={styles.noRideText}>No ride selected</Text>
+        )}
+      </BottomSheetView>
+    </BottomSheet>
+  );
 });
-export default RidesBS
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: 'gold',
+    marginBottom: 10,
+  },
+  infoText: {
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  detailsText: {
+    fontSize: 12,
+    color: 'gray',
+    marginTop: 10,
+  },
+  noRideText: {
+    fontSize: 16,
+    color: 'gray',
+  },
+});
+
+export default RidesBS;
