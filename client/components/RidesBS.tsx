@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-
+import { Pressable } from 'react-native-gesture-handler';
+import { useRouter } from 'expo-router';
 interface RiderDetails {
   name: string;
   rating: number;
@@ -15,15 +16,12 @@ interface Props {
 }
 
 const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
-  // Define the snap points
-  const snapPoints = useMemo(() => ['50%', '95%'], []);
-
-  // Callbacks
+  const snapPoints = useMemo(() => ['90%'], []);
+  const router=useRouter();
   const handleSheetChanges = useCallback((index: number) => {
     console.log('BottomSheet index changed:', index);
   }, []);
-
-  // Render
+  
   return (
     <BottomSheet
       ref={ref}
@@ -35,26 +33,18 @@ const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
       handleIndicatorStyle={{ backgroundColor: 'gray' }}
     >
       <BottomSheetView style={styles.contentContainer}>
-        {/* --------------TODO---------------- 
-          we need to add multiple containers(views) here to create this:
-          https://cdn.dribbble.com/userupload/15085517/file/original-0bfe38c1141385f18dc358ff7077ea36.jpg?resize=752x&vertical=center
-          (the middle picture with ride and rider details) 
-          no styling needed just try to replicate the loose structure
-          all info from props
-          */}
-        {ride ? (
-          <>
+        {ride && (<>
             <Text style={styles.titleText}>{ride.name}</Text>
             <Text style={styles.subtitleText}>Rating: {ride.rating} ★</Text>
             <Text style={styles.infoText}>Location: {ride.location}</Text>
             <Text style={styles.infoText}>Car: {ride.car}</Text>
             {ride.additionalDetails && (
-              <Text style={styles.detailsText}>{ride.additionalDetails}</Text>
+              <Text style={styles.detailsText}>{ride.additionalDetails}</Text>)}
+             
+                <Pressable onPress={()=>{
+                  router.push('/auth')}}><Text style={{color:"black",backgroundColor:'#8b5cf6',padding:20,width:'90%',borderRadius:20}} >Request Ride</Text></Pressable>
+               </>
             )}
-          </>
-        ) : (
-          <Text style={styles.noRideText}>No ride selected</Text>
-        )}
       </BottomSheetView>
     </BottomSheet>
   );

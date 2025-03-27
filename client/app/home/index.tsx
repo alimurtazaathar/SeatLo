@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RidesBS from '@/components/RidesBS';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PaperProvider, IconButton, Menu } from 'react-native-paper';
 import RideItems from '@/components/RideItem';
@@ -68,26 +68,9 @@ const Home = () => {
           <View>
             <Text style={styles.textColor}>Welcome User</Text>
           </View>
-        {/* --------------TODO---------------- 
-          - Make a hardcoded array of objects (since no backend) with ride details
-            (driver name, location, rating, everything you can see)
-          
-          - Small pressables will appear with brief info (on clicking them, a bottom sheet will appear with full info)
-          
-          Multiple Pressables are needed, so:
-          1) Make a reusable component in the components folder
-             <Pressable style={{backgroundColor:'white',padding:10,borderRadius:40,width:'80%'}} onPress={openBottomSheet}><Text style={{color:'black'}}>Umer Nadeem 5* GC</Text></Pressable>
-             Send brief info like name, rating, location through props into this component (not all info)
-             Then import this component into this file and make multiple instances (map the array with brief info into it)
-         
-          2) RideBS is a component in the components folder
-             Use map function to send all info as props into RideBS (make a variable with mapped components)
-             Place this mapped component array under the pressables
-          
-          3) Now see tasks in RidesBS.tsx
-          */}
-
+          <Pressable style={{backgroundColor:'#F7C846',padding: 20,borderRadius:20}}><Text>Switch to Driver</Text></Pressable>
           <View style={styles.ridesContainer}>
+            <Text style={{color:'#fff'}}>Rides near you</Text>
             {rides.map((ride) => (
               <RideItems 
                 key={ride.id} 
