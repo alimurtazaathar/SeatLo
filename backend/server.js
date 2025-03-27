@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Basic route to check if the server is running
 app.get('/', (req, res) => {
-  res.send('Carpool App Backend Running');
+  res.send('testing commit');
 });
 
 // Start the server
