@@ -1,18 +1,19 @@
-// backend/server.js
-
 const express = require('express');
+const sequelize = require('./config/database');
+PORT = 5000
+
 const app = express();
-const port = 5000;  // You can choose any available port
+app.use(express.json()); // JSON middleware
 
-// Middleware to parse JSON bodies
-app.use(express.json());
-
-// Basic route to check if the server is running
-app.get('/', (req, res) => {
-  res.send('testing commit');
+// API to Get All Users (Using Raw SQL)
+app.get('/viewusers', async (req, res) => {
+  try {
+    const [users] = await sequelize.query("SELECT * FROM users");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+// Start Server
+app.listen(PORT, () => console.log('🚀 Server running on port 5000'));
