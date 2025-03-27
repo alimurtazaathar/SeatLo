@@ -1,37 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState,useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RidesBS from '@/components/RidesBS';
 import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PaperProvider, IconButton, Menu } from 'react-native-paper';
 import RideItems from '@/components/RideItem';
-// TODO
-// We want this page to have:
-// - Tab with three dots at the top right
-// - Location and name in the middle
-// - Map in between
-// - Available rides
-// - Some way of switching to host a ride
-const HamburgerMenu = () => {
-  const [visible, setVisible] = useState(false);
+import HamburgerMenu from '@/components/HamburgerMenu';
 
-  return (
-    <View>
-      <Menu
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        anchor={
-          <IconButton icon="menu" size={24} onPress={() => setVisible(true)} />
-        }
-      >
-        <Menu.Item onPress={() => console.log('option1 clicked')} title="Option 1" />
-        <Menu.Item onPress={() => console.log('option2 clicked')} title="Option 2" />
-        <Menu.Item onPress={() => console.log('option3 clicked')} title="Option 3" />
-      </Menu>
-    </View>
-  );
-};
 
 const rides = [
   {id: 1, name: 'Umer Nadeem', rating: 5, location: 'GC', car: 'Alto',additionalDetails: 'Reliable driver with excellent service' },
@@ -51,7 +27,6 @@ interface Ride {
 const Home = () => {
   const bottomSheetRef = useRef(null);
   const [selectedRide, setSelectedRide] = useState<Ride|null>(null);
-
   const openBottomSheet = (ride:Ride) => {
     setSelectedRide(ride);
     setTimeout(() => {
@@ -63,7 +38,9 @@ const Home = () => {
     <GestureHandlerRootView style={{flex: 1}}>
       <PaperProvider>
         <SafeAreaView style={styles.container}>
-          <HamburgerMenu />
+          <View style={{marginLeft:'auto'}}>
+            <HamburgerMenu />
+          </View>
 
           <View>
             <Text style={styles.textColor}>Welcome User</Text>
