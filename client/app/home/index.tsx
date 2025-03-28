@@ -1,15 +1,12 @@
+
 import { View, Text, StyleSheet } from 'react-native';
-import React, { useRef, useState,useCallback } from 'react';
+import React, { useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import DriverRidesBS from '@/components/PassengerRideBS'; // Import Driver Bottom Sheet
+import DriverRidesBS from '@/components/PassengerRideBS';
 import RidesBS from '@/components/RidesBS';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { PaperProvider, IconButton, Menu, FAB } from 'react-native-paper';
+import { PaperProvider, FAB } from 'react-native-paper';
 import RideItems from '@/components/RideItem';
-
-// Passenger Rides Array
-import HamburgerMenu from '@/components/HamburgerMenu';
-
 
 const rides = [
   { id: 1, name: 'Umer Nadeem', rating: 5, location: 'GC', car: 'Alto', additionalDetails: 'Reliable driver with excellent service' },
@@ -17,7 +14,8 @@ const rides = [
   { id: 3, name: 'Ali Murtaza', rating: 5, location: 'Gabol Colony', car: 'Vitz', additionalDetails: 'Friendly driver, always on time' },
 ];
 
-// Driver Rides Array
+
+// ... (previous rides and driverRides arrays remain the same)
 const driverRides = [
   {
     id: 1,
@@ -45,17 +43,15 @@ const driverRides = [
 const Home = () => {
   const bottomSheetRef = useRef(null);
   const [selectedRide, setSelectedRide] = useState(null);
-  const [isDriverMode, setIsDriverMode] = useState(false); // Mode state
+  const [isDriverMode, setIsDriverMode] = useState(false);
 
-  // Open Bottom Sheet based on Mode
-  const openBottomSheet = (ride) => {
+  const openBottomSheet = (ride:any) => {
     setSelectedRide(ride);
     setTimeout(() => {
       (bottomSheetRef.current as any)?.expand();
     }, 100);
   };
 
-  // Toggle Mode Function
   const toggleMode = () => {
     setIsDriverMode(!isDriverMode);
   };
@@ -71,7 +67,7 @@ const Home = () => {
           </View>
 
           <View style={styles.ridesContainer}>
-            <Text style={{ color: '#fff' }}>
+            <Text style={styles.headerText}>
               {isDriverMode ? 'Available Rides to Host' : 'Rides near you'}
             </Text>
             {isDriverMode
@@ -124,21 +120,28 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
+    position: 'relative', 
   },
   textColor: {
     color: 'white',
     fontSize: 18,
     marginVertical: 10,
   },
+  headerText: {
+    color: '#fff',
+    marginBottom: 10, 
+  },
   ridesContainer: {
     width: '100%',
     gap: 10,
     paddingHorizontal: 20,
+    paddingBottom: 80,
   },
   fab: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#F7C846',
+   bottom:20,
+   width:363,
+    backgroundColor: 'indigo',
+    zIndex: 1000, 
   },
 });
