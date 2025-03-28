@@ -1,13 +1,16 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState,useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import DriverRidesBS from '@/components/PassengerRideBS'; 
+import DriverRidesBS from '@/components/PassengerRideBS'; // Import Driver Bottom Sheet
 import RidesBS from '@/components/RidesBS';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider, IconButton, Menu, FAB } from 'react-native-paper';
 import RideItems from '@/components/RideItem';
 
 // Passenger Rides Array
+import HamburgerMenu from '@/components/HamburgerMenu';
+
+
 const rides = [
   { id: 1, name: 'Umer Nadeem', rating: 5, location: 'GC', car: 'Alto', additionalDetails: 'Reliable driver with excellent service' },
   { id: 2, name: 'Abdurrahman Amir', rating: 4, location: 'Mochi Morh', car: 'Prius', additionalDetails: 'Comfortable ride with smooth driving' },

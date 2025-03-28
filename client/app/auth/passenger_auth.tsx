@@ -1,8 +1,8 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Pressable, TouchableOpacity } from 'react-native';
-
+import * as Location from "expo-location";
 const PassAuth = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -13,7 +13,24 @@ const PassAuth = () => {
     console.log('Phone:', phone);
     console.log('Gender:', gender);
   };
-
+  useEffect(() => {
+    const func=async () => {
+      console.log("Requesting location permission...");
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      console.log("Permission status:", status);
+  
+      if (status !== "granted") {
+        alert("Location permission is required to proceed.");
+        return;
+      }
+  
+      console.log("Getting location...");
+      let loc = await Location.getCurrentPositionAsync({});
+      console.log("User Location:", loc);
+    };
+    func();
+  }, []);
+  
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Sorry to slow you down!</Text>
