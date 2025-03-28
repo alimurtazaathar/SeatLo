@@ -42,7 +42,7 @@ const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
               <Text style={styles.detailsText}>{ride.additionalDetails}</Text>)}
              
                 <Pressable onPress={()=>{
-                  router.push('/auth')}}><Text style={{color:"black",backgroundColor:'#8b5cf6',padding:20,width:'90%',borderRadius:20}} >Request Ride</Text></Pressable>
+                  router.push('/auth/passenger_auth')}}><Text style={{color:"black",backgroundColor:'#8b5cf6',padding:20,width:'90%',borderRadius:20}} >Request Ride</Text></Pressable>
                </>
             )}
       </BottomSheetView>

@@ -1,92 +1,112 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DriverRidesBS from '@/components/PassengerRideBS'; 
 import RidesBS from '@/components/RidesBS';
-import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { PaperProvider, IconButton, Menu } from 'react-native-paper';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { PaperProvider, IconButton, Menu, FAB } from 'react-native-paper';
 import RideItems from '@/components/RideItem';
-// TODO
-// We want this page to have:
-// - Tab with three dots at the top right
-// - Location and name in the middle
-// - Map in between
-// - Available rides
-// - Some way of switching to host a ride
-const HamburgerMenu = () => {
-  const [visible, setVisible] = useState(false);
 
-  return (
-    <View>
-      <Menu
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        anchor={
-          <IconButton icon="menu" size={24} onPress={() => setVisible(true)} />
-        }
-      >
-        <Menu.Item onPress={() => console.log('option1 clicked')} title="Option 1" />
-        <Menu.Item onPress={() => console.log('option2 clicked')} title="Option 2" />
-        <Menu.Item onPress={() => console.log('option3 clicked')} title="Option 3" />
-      </Menu>
-    </View>
-  );
-};
-
+// Passenger Rides Array
 const rides = [
-  {id: 1, name: 'Umer Nadeem', rating: 5, location: 'GC', car: 'Alto',additionalDetails: 'Reliable driver with excellent service' },
-  { id: 2, name: 'Abdurrahman Amir', rating: 4, location: 'Mochi Morh', car: 'Prius',additionalDetails: 'Comfortable ride with smooth driving' },
-  { id: 3, name: 'Ali Murtaza', rating: 5, location: 'Gabol Colony', car: 'Vitz',additionalDetails: 'Friendly driver, always on time' },
+  { id: 1, name: 'Umer Nadeem', rating: 5, location: 'GC', car: 'Alto', additionalDetails: 'Reliable driver with excellent service' },
+  { id: 2, name: 'Abdurrahman Amir', rating: 4, location: 'Mochi Morh', car: 'Prius', additionalDetails: 'Comfortable ride with smooth driving' },
+  { id: 3, name: 'Ali Murtaza', rating: 5, location: 'Gabol Colony', car: 'Vitz', additionalDetails: 'Friendly driver, always on time' },
 ];
 
-interface Ride {
-  id: number;
-  name: string;
-  rating: number;
-  location: string;
-  car: string;
-  additionalDetails?: string;
-}
+// Driver Rides Array
+const driverRides = [
+  {
+    id: 1,
+    destination: 'DHA Phase 5',
+    departureTime: '8:00 AM',
+    availableSeats: 3,
+    route: 'Main Boulevard, Johar Town, DHA',
+    vehicleDetails: 'Honda Civic 2020',
+    passengers: [
+      { name: 'Ali', pickup: 'Model Town' },
+      { name: 'Ahmed', pickup: 'Wapda Town' },
+    ],
+  },
+  {
+    id: 2,
+    destination: 'Liberty Market',
+    departureTime: '9:30 AM',
+    availableSeats: 2,
+    route: 'Kalma Chowk, Liberty',
+    vehicleDetails: 'Toyota Corolla 2018',
+    passengers: [{ name: 'Sara', pickup: 'Gulberg' }],
+  },
+];
 
 const Home = () => {
   const bottomSheetRef = useRef(null);
-  const [selectedRide, setSelectedRide] = useState<Ride|null>(null);
+  const [selectedRide, setSelectedRide] = useState(null);
+  const [isDriverMode, setIsDriverMode] = useState(false); // Mode state
 
-  const openBottomSheet = (ride:Ride) => {
+  // Open Bottom Sheet based on Mode
+  const openBottomSheet = (ride) => {
     setSelectedRide(ride);
     setTimeout(() => {
-      (bottomSheetRef.current as any)?.expand(); // Use type assertion
+      (bottomSheetRef.current as any)?.expand();
     }, 100);
   };
 
+  // Toggle Mode Function
+  const toggleMode = () => {
+    setIsDriverMode(!isDriverMode);
+  };
+
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider>
         <SafeAreaView style={styles.container}>
-          <HamburgerMenu />
-
           <View>
-            <Text style={styles.textColor}>Welcome User</Text>
+            <Text style={styles.textColor}>
+              {isDriverMode ? 'Welcome Driver' : 'Welcome Passenger'}
+            </Text>
           </View>
-          <Pressable style={{backgroundColor:'#F7C846',padding: 20,borderRadius:20}}><Text>Switch to Driver</Text></Pressable>
+
           <View style={styles.ridesContainer}>
-            <Text style={{color:'#fff'}}>Rides near you</Text>
-            {rides.map((ride) => (
-              <RideItems 
-                key={ride.id} 
-                id={ride.id} 
-                name={ride.name} 
-                location={ride.location} 
-                onPress={() => openBottomSheet(ride)} 
-              />
-            ))}
+            <Text style={{ color: '#fff' }}>
+              {isDriverMode ? 'Available Rides to Host' : 'Rides near you'}
+            </Text>
+            {isDriverMode
+              ? driverRides.map((ride) => (
+                  <RideItems
+                    key={ride.id}
+                    id={ride.id}
+                    name={ride.destination}
+                    location={ride.route}
+                    onPress={() => openBottomSheet(ride)}
+                  />
+                ))
+              : rides.map((ride) => (
+                  <RideItems
+                    key={ride.id}
+                    id={ride.id}
+                    name={ride.name}
+                    location={ride.location}
+                    onPress={() => openBottomSheet(ride)}
+                  />
+                ))}
           </View>
 
-           {/* Bottom Sheet for Ride Details */}
-           <RidesBS ref={bottomSheetRef} ride={selectedRide} />
+          {/* Conditionally Render Bottom Sheets */}
+          {isDriverMode ? (
+            <DriverRidesBS ref={bottomSheetRef} ride={selectedRide} />
+          ) : (
+            <RidesBS ref={bottomSheetRef} ride={selectedRide} />
+          )}
 
-          {/* A switch modes button */}
-          {/* <View></View> */}
+          {/* Floating Action Button */}
+          <FAB
+            icon={isDriverMode ? "car" : "steering"}
+            label={isDriverMode ? "Switch to Passenger" : "Switch to Driver"}
+            style={styles.fab}
+            onPress={toggleMode}
+            color="#fff"
+          />
         </SafeAreaView>
       </PaperProvider>
     </GestureHandlerRootView>
@@ -99,17 +119,23 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#141414',
     flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   textColor: {
     color: 'white',
+    fontSize: 18,
+    marginVertical: 10,
   },
   ridesContainer: {
     width: '100%',
     gap: 10,
     paddingHorizontal: 20,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#F7C846',
   },
 });
