@@ -14,19 +14,17 @@ const rides = [
   { id: 3, name: 'Ali Murtaza', rating: 5, location: 'Gabol Colony', car: 'Vitz', additionalDetails: 'Friendly driver, always on time' },
 ];
 
-
-// ... (previous rides and driverRides arrays remain the same)
 const driverRides = [
   {
     id: 1,
     destination: 'DHA Phase 5',
     departureTime: '8:00 AM',
     availableSeats: 3,
-    route: 'Main Boulevard, Johar Town, DHA',
+    route: 'Johar Town, DHA',
     vehicleDetails: 'Honda Civic 2020',
     passengers: [
       { name: 'Ali', pickup: 'Model Town' },
-      { name: 'Ahmed', pickup: 'Wapda Town' },
+      { name: 'Ahmed', pickup: 'gulshan block 4 Town' },
     ],
   },
   {
@@ -34,7 +32,7 @@ const driverRides = [
     destination: 'Liberty Market',
     departureTime: '9:30 AM',
     availableSeats: 2,
-    route: 'Kalma Chowk, Liberty',
+    route: 'madras Chowk, Liberty',
     vehicleDetails: 'Toyota Corolla 2018',
     passengers: [{ name: 'Sara', pickup: 'Gulberg' }],
   },
