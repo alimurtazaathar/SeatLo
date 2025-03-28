@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
    bottom:20,
    width:363,
-    backgroundColor: 'indigo',
+    backgroundColor: '#5328e8',
     zIndex: 1000, 
   },
 });
