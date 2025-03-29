@@ -30,9 +30,9 @@ const bottomSheetRef = useRef(null);
     func();
   }, []);
   
-  //  <GestureHandlerRootView style={{flex:1}}>
 
   return (
+          <GestureHandlerRootView style={{ flex: 1 }}>
       
         <SafeAreaView style={styles.container}>
           <Text style={{ color: "white", fontSize: 100, fontFamily: "Vercetti", marginLeft: 10,marginTop:150}}>
@@ -71,6 +71,7 @@ const bottomSheetRef = useRef(null);
     </BottomSheet>
       
         </SafeAreaView>
+        </GestureHandlerRootView>
   );
 }
 

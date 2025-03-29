@@ -1,10 +1,15 @@
-import { Stack } from "expo-router";
-
-export default function RootLayout() {
-  return (<Stack screenOptions={{headerShown:false}}>
-    <Stack.Screen name="index" options={{headerShown:false}}/>
+import { Stack } from 'expo-router';
+import { 
+    GestureHandlerRootView
+  } from 'react-native-gesture-handler';
   
-  </Stack>
+export default function HomeLayout() {
+  return (
 
-  )
+    <Stack>
+
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+    </Stack>
+
+  );
 }

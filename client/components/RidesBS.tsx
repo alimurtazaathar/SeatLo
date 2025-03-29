@@ -3,6 +3,7 @@ import React, { forwardRef, useCallback, useMemo } from 'react';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { Pressable } from 'react-native-gesture-handler';
 import { useRouter } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 interface RiderDetails {
   name: string;
   rating: number;
@@ -23,6 +24,7 @@ const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
   }, []);
   
   return (
+       <GestureHandlerRootView style={{ flex: 1 }}>
     <BottomSheet
       ref={ref}
       index={-1}
@@ -47,6 +49,7 @@ const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
             )}
       </BottomSheetView>
     </BottomSheet>
+    </GestureHandlerRootView>
   );
 });
 
