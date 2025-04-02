@@ -7,6 +7,7 @@ import * as Location from "expo-location";
 
 export default function StepIndicator() {
   const [email, setEmail] = useState("");
+  const [location, setLocation] = useState(null);
 const bottomSheetRef = useRef(null);
    const snapPoints = useMemo(() => ['50%','90%'], []);
    const handleSheetChanges = useCallback((index: number) => {

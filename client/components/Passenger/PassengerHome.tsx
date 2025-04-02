@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useRef, useState } from 'react';
-import RidesBS from '@/components/RidesBS';
+import RidesBS from '@/components/Passenger/RidesBS';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import RideItems from '@/components/RideItem';
 

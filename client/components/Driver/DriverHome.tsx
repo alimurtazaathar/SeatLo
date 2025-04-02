@@ -5,7 +5,7 @@
 
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useRef, useState } from 'react';
-import DriverRidesBS from '@/components/DriverRideBS';
+import DriverRidesBS from '@/components/Driver/DriverRideBS';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import RideItems from '@/components/RideItem';
 

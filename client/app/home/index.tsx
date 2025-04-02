@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { PaperProvider, FAB } from 'react-native-paper';
-import PassengerHome from '@/components/PassengerHome';
-import DriverHome from '@/components/DriverHome';
+import PassengerHome from '@/components/Passenger/PassengerHome';
+import DriverHome from '@/components/Driver/DriverHome';
 import HamburgerMenu from '@/components/HamburgerMenu';
 import { runOnJS } from 'react-native-reanimated';
 import { 
@@ -25,6 +25,7 @@ const HomeLayout = () => {
     })
     .runOnJS(true);
   
+    
   const flingRight = Gesture.Fling()
     .direction(Directions.RIGHT)
     .onEnd(() => {
