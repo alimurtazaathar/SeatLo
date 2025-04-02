@@ -43,7 +43,7 @@ const DriverAuth = () => {
           <Text style={styles.radioText}>Female</Text>
         </TouchableOpacity>
       </View>
-      <Pressable style={styles.button}>
+      <Pressable style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Register as Driver</Text>
       </Pressable>
         </SafeAreaView>

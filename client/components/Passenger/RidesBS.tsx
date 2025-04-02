@@ -24,7 +24,7 @@ const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
   }, []);
   
   return (
-       <GestureHandlerRootView style={{ flex: 1 }}>
+       
     <BottomSheet
       ref={ref}
       index={-1}
@@ -37,7 +37,7 @@ const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
       <BottomSheetView style={styles.contentContainer}>
         {ride && (<>
             <Text style={styles.titleText}>{ride.name}</Text>
-            <Text style={styles.subtitleText}>Rating: {ride.rating} ★</Text>
+            <Text style={styles.subtitleText}>🌟 Rating: {ride.rating} </Text>
             <Text style={styles.infoText}>Location: {ride.location}</Text>
             <Text style={styles.infoText}>Car: {ride.car}</Text>
             {ride.additionalDetails && (
@@ -49,7 +49,7 @@ const RidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
             )}
       </BottomSheetView>
     </BottomSheet>
-    </GestureHandlerRootView>
+   
   );
 });
 

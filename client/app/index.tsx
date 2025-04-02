@@ -86,7 +86,7 @@ const handleContinue = () => {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#5328e8",display:'flex' },
+  container: { flex: 1, backgroundColor: "#8b5cf6",display:'flex' },
   formContainer: {
     // flex: 1,
     backgroundColor: "#141414",
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   continueButton: {
-    backgroundColor: "#5328e8",
+    backgroundColor: "#8b5cf6",
     padding: 15,
     borderRadius: 22,
     width: "100%",

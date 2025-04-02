@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     width: 360,
-    backgroundColor: '#5328e8',
+    backgroundColor: '#8b5cf6',
     alignSelf: 'center',
   },
 });
