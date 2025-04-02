@@ -13,6 +13,16 @@ const bottomSheetRef = useRef(null);
    const handleSheetChanges = useCallback((index: number) => {
     console.log('BottomSheet index changed:', index);
   }, []);
+
+const handleContinue = () => {
+  if( email == "abdurrahman126amir@gmail.com"){
+    router.replace("/admin")
+  }
+  else{
+    router.replace("/home")
+  }
+};
+
   useEffect(() => {
     const func=async () => {
       console.log("Requesting location permission...");
@@ -62,9 +72,8 @@ const bottomSheetRef = useRef(null);
           value={email}
           
           onChangeText={setEmail}/>
-          
         
-        <Pressable style={styles.continueButton} onPress={() => router.replace("/home")}>
+        <Pressable style={styles.continueButton} onPress={handleContinue}>
           <Text style={styles.buttonText}>Continue</Text>
         </Pressable>
       </BottomSheetView>
