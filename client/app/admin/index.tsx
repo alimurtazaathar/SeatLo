@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Modal, SafeAreaView, BackHandler, TouchableOpacity, TextInput } from "react-native";
+import { 
+  View, Text, StyleSheet, SafeAreaView, BackHandler, TouchableOpacity, TextInput 
+} from "react-native";
 import { useRouter } from "expo-router";
 import UserList from "./UserList";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 export default function AdminHome() {
   const [password, setPassword] = useState("");
@@ -11,25 +14,36 @@ export default function AdminHome() {
   const [showAuthModal, setShowAuthModal] = useState(true);
   const router = useRouter();
 
+  const modalOpacity = useSharedValue(1);
+  const modalScale = useSharedValue(1);
+  const dashboardOpacity = useSharedValue(0);
+
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => {
-        if (showAuthModal && !isAuthenticated) {
-          router.replace("/");
-          return true;
-        }
-        return false;
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (showAuthModal && !isAuthenticated) {
+        router.replace("/");
+        return true;
       }
-    );
+      return false;
+    });
     return () => backHandler.remove();
   }, [showAuthModal, isAuthenticated]);
 
   const authenticatePass = () => {
     if (password === "1234") {
       setAuthMessage("Welcome To the Admin Page");
-      setIsAuthenticated(true);
-      setShowAuthModal(false);
+
+     
+      modalOpacity.value = withTiming(0, { duration: 500 });
+      modalScale.value = withTiming(0.8, { duration: 500 });
+
+      setTimeout(() => {
+        setIsAuthenticated(true);
+        setShowAuthModal(false);
+
+        
+        dashboardOpacity.value = withTiming(1, { duration: 500 });
+      }, 500);
     } else {
       setAuthMessage("Incorrect Password, please try again");
     }
@@ -45,22 +59,33 @@ export default function AdminHome() {
     setShowAuthModal(true);
     setPassword("");
     setAuthMessage("");
+
+    
+    modalOpacity.value = 1;
+    modalScale.value = 1;
+    dashboardOpacity.value = 0;
   };
+
+  
+  const modalStyle = useAnimatedStyle(() => ({
+    opacity: modalOpacity.value,
+    transform: [{ scale: modalScale.value }],
+  }));
+
+  const dashboardStyle = useAnimatedStyle(() => ({
+    opacity: dashboardOpacity.value,
+  }));
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
+
         {/* Authentication Modal */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={showAuthModal && !isAuthenticated}
-          onRequestClose={handleBackToMain}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
+        {showAuthModal && !isAuthenticated && (
+          <Animated.View style={[styles.modalOverlay, modalStyle]}>
+            <Animated.View style={[styles.modalContent, modalStyle]}>
               <Text style={styles.modalTitle}>Admin Authentication</Text>
-              
+
               <TextInput
                 style={styles.input}
                 placeholder="Enter Admin Password"
@@ -69,11 +94,11 @@ export default function AdminHome() {
                 value={password}
                 onChangeText={setPassword}
               />
-              
+
               {authMessage ? (
                 <Text style={styles.errorMessage}>{authMessage}</Text>
               ) : null}
-              
+
               <View style={styles.buttonRow}>
                 <TouchableOpacity 
                   style={[styles.button, styles.backButton]} 
@@ -81,7 +106,7 @@ export default function AdminHome() {
                 >
                   <Text style={styles.buttonText}>Back</Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity 
                   style={[styles.button, styles.loginButton]} 
                   onPress={authenticatePass}
@@ -89,25 +114,24 @@ export default function AdminHome() {
                   <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
               </View>
-            </View>
-          </View>
-        </Modal>
+            </Animated.View>
+          </Animated.View>
+        )}
 
         {/* Admin Dashboard */}
         {isAuthenticated && (
-          <View style={styles.adminContainer}>
+          <Animated.View style={[styles.adminContainer, dashboardStyle]}>
             <Text style={styles.heading}>Admin Dashboard</Text>
-            
             <UserList/>
-            
             <TouchableOpacity 
               style={styles.logoutButton}
               onPress={handleLogout}
             >
               <Text style={styles.buttonText}>Logout</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         )}
+
       </SafeAreaView>
     </GestureHandlerRootView>
   );
@@ -131,13 +155,10 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   modalTitle: {
     fontSize: 20,
@@ -173,11 +194,6 @@ const styles = StyleSheet.create({
   backButton: {
     backgroundColor: '#64748b',
   },
-  tryAgainButton: {
-    backgroundColor: '#f59e0b',
-    width: '100%',
-    marginTop: 15,
-  },
   logoutButton: {
     backgroundColor: '#ef4444',
     padding: 15,
@@ -202,12 +218,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 50,
   },
-  unauthenticatedContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
   heading: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -215,10 +225,5 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  text: {
-    fontSize: 16,
-    color: 'white',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
 });
+
