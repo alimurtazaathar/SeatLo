@@ -26,14 +26,14 @@ const HomeLayout = () => {
     .runOnJS(true);
   
     
-  const flingRight = Gesture.Fling()
-    .direction(Directions.RIGHT)
-    .onEnd(() => {
-      console.log('swiped right')
-      runOnJS(setIsDriverMode)((prev) => !prev); 
-    }).runOnJS(true);
+  // const flingRight = Gesture.Fling()
+  //   .direction(Directions.RIGHT)
+  //   .onEnd(() => {
+  //     console.log('swiped right')
+  //     runOnJS(setIsDriverMode)((prev) => !prev); 
+  //   }).runOnJS(true);
 
-  const combinedGesture = Gesture.Exclusive(flingLeft, flingRight);
+  const combinedGesture = Gesture.Exclusive(flingLeft);
 
   return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -42,8 +42,8 @@ const HomeLayout = () => {
         <SafeAreaView style={styles.container}>
           {/* Header Section */}
           <View style={styles.header}>
-            <Text style={styles.locationText}>Location here</Text>
-            <HamburgerMenu />
+            {/* <Text style={styles.locationText}>Location here</Text> */}
+            {/* <HamburgerMenu /> */}
           </View>
 
           {/* Gesture Detector Wrapping Only the Changing Content */}
@@ -53,7 +53,7 @@ const HomeLayout = () => {
             </View>
           </GestureDetector>
 
-          {/* Floating Action Button (Switch Mode) */}
+          {/* Floating Action Brutton (Switch Mode) */}
           <FAB
             icon={isDriverMode ? 'car' : 'steering'}
             label={isDriverMode ? 'Switch to Passenger' : 'Switch to Driver'}
