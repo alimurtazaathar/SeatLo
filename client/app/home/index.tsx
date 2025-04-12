@@ -1,132 +1,101 @@
+import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import React, { useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import RidesBS from '@/components/RidesBS';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { PaperProvider, IconButton, Menu } from 'react-native-paper';
-import RideItems from '@/components/RideItem';
-// TODO
-// We want this page to have:
-// - Tab with three dots at the top right
-// - Location and name in the middle
-// - Map in between
-// - Available rides
-// - Some way of switching to host a ride
-const HamburgerMenu = () => {
-  const [visible, setVisible] = useState(false);
+import { PaperProvider, FAB } from 'react-native-paper';
+import PassengerHome from '@/components/Passenger/PassengerHome';
+import DriverHome from '@/components/Driver/DriverHome';
+import HamburgerMenu from '@/components/HamburgerMenu';
+import { runOnJS } from 'react-native-reanimated';
+import { 
+  GestureHandlerRootView, 
+  Gesture, 
+  GestureDetector,
+  Directions
+} from 'react-native-gesture-handler';
+
+const HomeLayout = () => {
+  const [isDriverMode, setIsDriverMode] = useState(false);
+
+
+    const flingLeft = Gesture.Fling()
+    .direction(Directions.LEFT)
+    .onEnd(() => {
+      console.log('swiped left')
+      runOnJS(setIsDriverMode)((prev) => !prev);
+    })
+    .runOnJS(true);
+  
+    
+  // const flingRight = Gesture.Fling()
+  //   .direction(Directions.RIGHT)
+  //   .onEnd(() => {
+  //     console.log('swiped right')
+  //     runOnJS(setIsDriverMode)((prev) => !prev); 
+  //   }).runOnJS(true);
+
+  const combinedGesture = Gesture.Exclusive(flingLeft);
 
   return (
-    <View>
-      <Menu
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        anchor={
-          <IconButton icon="menu" size={24} onPress={() => setVisible(true)} />
-        }
-      >
-        <Menu.Item onPress={() => console.log('option1 clicked')} title="Option 1" />
-        <Menu.Item onPress={() => console.log('option2 clicked')} title="Option 2" />
-        <Menu.Item onPress={() => console.log('option3 clicked')} title="Option 3" />
-      </Menu>
-    </View>
-  );
-};
-
-const rides = [
-  {id: 1, name: 'Umer Nadeem', rating: 5, location: 'GC', car: 'Alto',additionalDetails: 'Reliable driver with excellent service' },
-  { id: 2, name: 'Abdurrahman Amir', rating: 4, location: 'Mochi Morh', car: 'Prius',additionalDetails: 'Comfortable ride with smooth driving' },
-  { id: 3, name: 'Ali Murtaza', rating: 5, location: 'Gabol Colony', car: 'Vitz',additionalDetails: 'Friendly driver, always on time' },
-];
-
-interface Ride {
-  id: number;
-  name: string;
-  rating: number;
-  location: string;
-  car: string;
-  additionalDetails?: string;
-}
-
-const Home = () => {
-  const bottomSheetRef = useRef(null);
-  const [selectedRide, setSelectedRide] = useState<Ride|null>(null);
-
-  const openBottomSheet = (ride:Ride) => {
-    setSelectedRide(ride);
-    setTimeout(() => {
-      (bottomSheetRef.current as any)?.expand(); // Use type assertion
-    }, 100);
-  };
-
-  return (
-    <GestureHandlerRootView style={{flex: 1}}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+    
       <PaperProvider>
         <SafeAreaView style={styles.container}>
-          <HamburgerMenu />
-
-          <View>
-            <Text style={styles.textColor}>Welcome User</Text>
-          </View>
-        {/* --------------TODO---------------- 
-          - Make a hardcoded array of objects (since no backend) with ride details
-            (driver name, location, rating, everything you can see)
-          
-          - Small pressables will appear with brief info (on clicking them, a bottom sheet will appear with full info)
-          
-          Multiple Pressables are needed, so:
-          1) Make a reusable component in the components folder
-             <Pressable style={{backgroundColor:'white',padding:10,borderRadius:40,width:'80%'}} onPress={openBottomSheet}><Text style={{color:'black'}}>Umer Nadeem 5* GC</Text></Pressable>
-             Send brief info like name, rating, location through props into this component (not all info)
-             Then import this component into this file and make multiple instances (map the array with brief info into it)
-         
-          2) RideBS is a component in the components folder
-             Use map function to send all info as props into RideBS (make a variable with mapped components)
-             Place this mapped component array under the pressables
-          
-          3) Now see tasks in RidesBS.tsx
-          */}
-
-          <View style={styles.ridesContainer}>
-            {rides.map((ride) => (
-              <RideItems 
-                key={ride.id} 
-                id={ride.id} 
-                name={ride.name} 
-                location={ride.location} 
-                onPress={() => openBottomSheet(ride)} 
-              />
-            ))}
+          {/* Header Section */}
+          <View style={styles.header}>
+            {/* <Text style={styles.locationText}>Location here</Text> */}
+            {/* <HamburgerMenu /> */}
           </View>
 
-           {/* Bottom Sheet for Ride Details */}
-           <RidesBS ref={bottomSheetRef} ride={selectedRide} />
+          {/* Gesture Detector Wrapping Only the Changing Content */}
+          <GestureDetector gesture={combinedGesture}>
+            <View style={styles.content}>
+              {isDriverMode ? <DriverHome /> : <PassengerHome />}
+            </View>
+          </GestureDetector>
 
-          {/* A switch modes button */}
-          {/* <View></View> */}
+          {/* Floating Action Brutton (Switch Mode) */}
+          <FAB
+            icon={isDriverMode ? 'car' : 'steering'}
+            label={isDriverMode ? 'Switch to Passenger' : 'Switch to Driver'}
+            style={styles.fab}
+            onPress={() => setIsDriverMode(!isDriverMode)}
+            color="#fff"
+          />
         </SafeAreaView>
       </PaperProvider>
-    </GestureHandlerRootView>
+      </GestureHandlerRootView>
   );
 };
 
-export default Home;
+export default HomeLayout;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#141414',
     flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textColor: {
-    color: 'white',
-  },
-  ridesContainer: {
+    backgroundColor: '#141414',
     width: '100%',
-    gap: 10,
-    paddingHorizontal: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  locationText: {
+    color: 'white',
+    marginRight: 'auto',
+    fontSize: 16,
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 20,
+    width: 360,
+    backgroundColor: '#8b5cf6',
+    alignSelf: 'center',
   },
 });
