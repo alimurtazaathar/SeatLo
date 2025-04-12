@@ -2,6 +2,9 @@ const express = require('express');
 const sequelize = require('./config/database');
 const { User, Car, Ride, RideStop, RideRequest, Rating, Notification, RideHistory } = require('./models'); // Import all models
 
+// Import custom route files
+const rideRoutes = require('./routes/RidesRoutes');
+
 const PORT = 5000;
 const app = express();
 
@@ -20,6 +23,9 @@ sequelize.sync({ force: false }) // Change `force: true` to `false` in productio
   .catch((err) => {
     console.error('❌ Database sync failed:', err);
   });
+
+// So `/api/rides/all` will hit the GET all rides route
+app.use('/api/rides', rideRoutes);
 
 // API to Get All Users (Using Raw SQL)
 app.get('/viewusers', async (req, res) => {

@@ -1,7 +1,8 @@
 const { Sequelize } = require('sequelize');
-const sequelize = require('../config/database');  // Import sequelize from database.js
+const sequelize = require('../config/database'); 
 
-// Import individual models
+
+// Import models
 const User = require('./Users');
 const Car = require('./Cars');
 const Ride = require('./Rides');
@@ -10,19 +11,14 @@ const RideRequest = require('./RideRequests');
 const Rating = require('./Ratings');
 const Notification = require('./Notifications');
 
-// Test the connection to ensure it's working
-sequelize.authenticate()
-  .then(() => console.log('✅ Connected to PostgreSQL successfully!'))
-  .catch(err => console.error('❌ Connection failed:', err));
-
-// Define associations between models
+// Define associations
 User.hasMany(Car, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 Car.belongsTo(User, { foreignKey: 'user_id' });
 
-User.hasMany(Ride, { foreignKey: 'driver_id', onDelete: 'CASCADE' });
-Ride.belongsTo(User, { foreignKey: 'driver_id' });
+User.hasMany(Ride, { foreignKey: 'driver_id', onDelete: 'CASCADE', as: 'driver' });
+Ride.belongsTo(User, { foreignKey: 'driver_id', as: 'driver' });
 
-Ride.hasMany(RideStop, { foreignKey: 'ride_id', onDelete: 'CASCADE' });
+Ride.hasMany(RideStop, { foreignKey: 'ride_id', onDelete: 'CASCADE', as: 'stops' });
 RideStop.belongsTo(Ride, { foreignKey: 'ride_id' });
 
 Ride.hasMany(RideRequest, { foreignKey: 'ride_id', onDelete: 'CASCADE' });
@@ -43,5 +39,9 @@ Rating.belongsTo(User, { foreignKey: 'reviewee_id' });
 User.hasMany(Notification, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 Notification.belongsTo(User, { foreignKey: 'user_id' });
 
-// Export sequelize and all models
+// Ensure Ride and Car are associated properly
+Ride.belongsTo(Car, { foreignKey: 'car_id', onDelete: 'SET NULL', as: 'car' });  // `as: 'car'` is crucial
+Car.hasMany(Ride, { foreignKey: 'car_id' });
+
+// Export models
 module.exports = { sequelize, User, Car, Ride, RideStop, RideRequest, Rating, Notification };
