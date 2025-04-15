@@ -10,19 +10,20 @@ const app = express();
 
 app.use(express.json()); // JSON middleware
 
-// Sync Sequelize models with the database
-sequelize.sync({ force: false }) // Change `force: true` to `false` in production
-  .then(() => {
-    console.log('✅ Database synced successfully!');
-    
-    // Start Server only after the database is synced
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('❌ Database sync failed:', err);
-  });
+// Don't sync the database, just start the server
+// (You can comment the sync code if you don't need it right now)
+// sequelize.sync({ force: false }) 
+//   .then(() => {
+//     console.log('✅ Database synced successfully!');
+//   })
+//   .catch((err) => {
+//     console.error('❌ Database sync failed:', err);
+//   });
+
+// Start the server directly without syncing models
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
 
 // So `/api/rides/all` will hit the GET all rides route
 app.use('/api/rides', rideRoutes);
@@ -38,4 +39,3 @@ app.get('/viewusers', async (req, res) => {
 });
 
 // Other API routes go here...
-

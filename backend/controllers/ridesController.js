@@ -32,20 +32,48 @@ exports.createRide = async (req, res) => {
   }
 };
 
-// Get all available rides
 exports.getAllRides = async (req, res) => {
   try {
+    const userId = req.query.userId; // Assuming userId is passed as a query parameter
+
     const rides = await Ride.findAll({
       where: { status: 'active' },
       include: [
-        { model: User, as: 'driver', attributes: ['id', 'name'] },  // Alias 'driver'
-        { model: RideStop, as: 'stops' },  // Alias 'stops'
-        { model: Car, as: 'car' },  // Alias 'car'
+        { model: User, as: 'driver', attributes: ['name'] },
+        { model: RideStop, as: 'stops', attributes: ['stop_name', 'stop_order'] },
+        { model: Car, as: 'car', attributes: ['model', 'color', 'license_plate'] },
+        {
+          model: RideRequest, // Include the RideRequest to check if the user has requested this ride
+          as: 'requests',
+          where: { passenger_id: userId },
+          required: false, // Makes the join optional (if no request exists for this ride)
+          attributes: ['status'] // Get the status of the user's request
+        }
       ],
+      attributes: ['start_time', 'date', 'total_seats', 'available_seats']
     });
 
-    res.status(200).json(rides);
+    // Transform the data
+    const cleanRides = rides.map(ride => {
+      const requestStatus = ride.requests?.[0]?.status || null; // If no request, default to null
+
+      return {
+        driver: ride.driver.name,
+        car: ride.car,
+        start_time: ride.start_time,
+        date: ride.date,
+        total_seats: ride.total_seats,
+        available_seats: ride.available_seats,
+        stops: ride.stops
+          .sort((a, b) => a.stop_order - b.stop_order)
+          .map(stop => stop.stop_name),
+        request_status: requestStatus // Add the request status to the response
+      };
+    });
+
+    res.status(200).json(cleanRides); // Return the transformed ride data
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
