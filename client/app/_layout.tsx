@@ -1,16 +1,11 @@
-//delete this comment
-import { Stack } from "expo-router";
-import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
+import { Slot } from 'expo-router';
+import { SessionProvider } from '../utils/ctx';
 
-export default function RootLayout() {
+export default function Root() {
+  // Set up the auth context and render our layout inside of it.
   return (
-    <GestureHandlerRootView >
-  <Stack screenOptions={{headerShown:false}}>
-    <Stack.Screen name="index" />
-    <Stack.Screen name="auth" options={{headerShown:false}}/>
-    <Stack.Screen name="home" options={{headerShown:false}}/>
-    <Stack.Screen name="admin" options={{headerShown:false}}/>
-  </Stack>
-  </GestureHandlerRootView>
-  )
+    <SessionProvider>
+      <Slot />
+    </SessionProvider>
+  );
 }

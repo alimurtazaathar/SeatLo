@@ -2,8 +2,10 @@ import { View, Text, Pressable,StyleSheet } from "react-native";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native";
 import { DrawerContentScrollView, DrawerItem, DrawerItemList } from "@react-navigation/drawer";
+import { useSession } from "@/utils/ctx";
 
 export default function CustomDrawer() {
+  const {signOut}=useSession();
   return (<SafeAreaView style={{flex:1}}>
       
           <View style={{padding:20,paddingTop:60,marginBottom:'auto' }}>
@@ -34,11 +36,13 @@ export default function CustomDrawer() {
                 </Pressable>
               </Link>
               
-                  <Link href="/" asChild>
-                    <Pressable style={{ paddingVertical: 30}}>
+                 
+                    <Pressable style={{ paddingVertical: 30}} onPress={()=>{
+                      signOut();
+                    }}>
                       <Text style={{ color:'red',fontSize:15,fontWeight:"bold" }}>Logout</Text>
                     </Pressable>
-                  </Link>
+                 
           </View>
               <View style={{padding:20}}>
               </View>
