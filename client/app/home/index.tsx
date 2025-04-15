@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PaperProvider, FAB } from 'react-native-paper';
 import PassengerHome from '@/components/Passenger/PassengerHome';
 import DriverHome from '@/components/Driver/DriverHome';
-import HamburgerMenu from '@/components/HamburgerMenu';
 import { runOnJS } from 'react-native-reanimated';
 import { 
   GestureHandlerRootView, 
@@ -41,10 +40,10 @@ const HomeLayout = () => {
       <PaperProvider>
         <SafeAreaView style={styles.container}>
           {/* Header Section */}
-          <View style={styles.header}>
+          {/* <View style={styles.header}> */}
             {/* <Text style={styles.locationText}>Location here</Text> */}
             {/* <HamburgerMenu /> */}
-          </View>
+          {/* </View> */}
 
           {/* Gesture Detector Wrapping Only the Changing Content */}
           <GestureDetector gesture={combinedGesture}>
@@ -54,13 +53,13 @@ const HomeLayout = () => {
           </GestureDetector>
 
           {/* Floating Action Brutton (Switch Mode) */}
-          <FAB
+          {/* <FAB
             icon={isDriverMode ? 'car' : 'steering'}
             label={isDriverMode ? 'Switch to Passenger' : 'Switch to Driver'}
             style={styles.fab}
             onPress={() => setIsDriverMode(!isDriverMode)}
             color="#fff"
-          />
+          /> */}
         </SafeAreaView>
       </PaperProvider>
       </GestureHandlerRootView>
@@ -72,8 +71,12 @@ export default HomeLayout;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    display:"flex",
+    justifyContent:'flex-start',
     backgroundColor: '#141414',
     width: '100%',
+    borderWidth:2,
+    borderColor:'white'
   },
   header: {
     flexDirection: 'row',
@@ -88,13 +91,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   content: {
-    flex: 1,
-    padding: 20,
+    paddingHorizontal:5,
+    flex:1,
+    height:'100%'
   },
   fab: {
-    position: 'absolute',
-    bottom: 20,
+    position:'fixed',
     width: 360,
+    zIndex:10,
     backgroundColor: '#8b5cf6',
     alignSelf: 'center',
   },

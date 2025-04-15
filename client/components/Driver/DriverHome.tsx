@@ -5,10 +5,11 @@
 
 import { View, Text, StyleSheet } from 'react-native';
 import React, { useRef, useState } from 'react';
-import DriverRidesBS from '@/components/Driver/DriverRideBS';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import DriverRideHistory from '@/components/Driver/DriverRideHistory';
+import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
 import RideItems from '@/components/RideItem';
-
+import AddRide from './AddRide';
+import BottomSheet from "@gorhom/bottom-sheet"; 
 const driverRides = [
   {
     id: 1,
@@ -35,6 +36,7 @@ const driverRides = [
 
 const DriverHome = () => {
   const bottomSheetRef = useRef(null);
+  const addRideSheetRef=useRef<BottomSheet>(null);
   const [selectedRide, setSelectedRide] = useState(null);
 
   const openBottomSheet = (ride: any) => {
@@ -43,21 +45,31 @@ const DriverHome = () => {
       (bottomSheetRef.current as any)?.expand();
     }, 100);
   };
+  const addRide = () => {
+   addRideSheetRef.current?.expand();
+  };
+  const handleFormSubmit = (data: any) => {
+    console.log('Submitted form data:', data);
+  };
 
   return (
       <View style={styles.container}>
-        <View><Text style={{color:'white',textAlign:'center',borderWidth:2,borderColor:'white'}}>Some stats here</Text></View>
-        <Text style={styles.headerText}>Available Rides to Host</Text>
+        {/* <View><Text style={{color:'white',textAlign:'center',borderWidth:2,borderColor:'white'}}>Some stats here</Text></View> */}
+        <Pressable style={{padding:15,borderRadius:10,backgroundColor:'#F7C846',marginBottom:15}} onPress={addRide}><Text style={{color:'black',textAlign:'center'}}>+ Add a ride</Text></Pressable>
+        <Text style={styles.headerText}>History</Text>
         {driverRides.map((ride) => (
           <RideItems
             key={ride.id}
             id={ride.id}
             name={ride.destination}
             location={ride.route}
+            History={true}
             onPress={() => openBottomSheet(ride)}
           />
         ))}
-      <DriverRidesBS ref={bottomSheetRef} ride={selectedRide} />
+
+      <DriverRideHistory ref={bottomSheetRef} ride={selectedRide} />
+      <AddRide ref={addRideSheetRef} onSubmit={handleFormSubmit} />
       </View>
 
   );
@@ -68,7 +80,12 @@ export default DriverHome;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width:'100%'
+    width:'100%',
+    height:'100%',
+    // borderWidth:2,
+    // borderColor:'white',
+    paddingHorizontal:10,
+    // top:0
   },
   headerText: {
     color: '#fff',

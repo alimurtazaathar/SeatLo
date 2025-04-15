@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet ,Pressable} from 'react-native';
 import React, { useRef, useState } from 'react';
 import RidesBS from '@/components/Passenger/RidesBS';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -23,7 +23,10 @@ const PassengerHome = () => {
 
   return (
       <View style={styles.container}>
+        <Pressable style={{padding:15,borderRadius:10,backgroundColor:'#F7C846',marginBottom:10}}><Text style={{color:'black',textAlign:'center',fontWeight:'bold'}}>+ Lesss Go</Text><Text style={{fontSize:10,textAlign:'center'}}>In a hurry? Leave it on us</Text></Pressable>
+        
         <Text style={styles.headerText}>Rides Near You</Text>
+        <Text style={{fontSize:10,color:'white',marginBottom: 10,}}>Choose rides based on your preference</Text>
         {rides.map((ride) => (
           <RideItems
             key={ride.id}
@@ -49,6 +52,6 @@ const styles = StyleSheet.create({
   headerText: {
     color: '#fff',
     fontSize: 18,
-    marginBottom: 10,
+
   },
 });

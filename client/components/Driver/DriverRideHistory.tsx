@@ -19,12 +19,12 @@ interface Props {
   ride: DriverRideDetails | null;
 }
 
-const DriverRidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
+const DriverRideHistory = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
   const snapPoints = useMemo(() => ['90%'], []);
   const router = useRouter();
 
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('DriverBottomSheet index changed:', index);
+    // console.log('DriverBottomSheet index changed:', index);
   }, []);
   
   if (!ride) return null;
@@ -62,22 +62,23 @@ const DriverRidesBS = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
           {ride.passengers && ride.passengers.length > 0 && (
             <View style={styles.passengersSection}>
               <Text style={styles.sectionTitle}>Passengers:</Text>
-              {ride.passengers.map((passenger, index) => (
-                <Text key={index} style={styles.passengerText}>
+              {ride.passengers.map((passenger, index) => (<View key={index}> 
+                <Text  style={styles.passengerText}>
                   {passenger.name} - Pickup: {passenger.pickup}
                 </Text>
+                <Pressable><Text style={{color:"black",padding:10,backgroundColor:'#ff6666',width:'40%',fontSize:12,borderRadius:10}}>Remind for payment</Text></Pressable></View>
               ))}
             </View>
           )}
         </View>
         
         {/* Manage Ride Button */}
-        <Pressable 
+        {/* <Pressable 
           onPress={() => router.push('/auth/driver_auth')}
           style={styles.actionButton}
         >
           <Text style={styles.actionButtonText}>Manage Ride</Text>
-        </Pressable>
+        </Pressable> */}
       </BottomSheetView>
     </BottomSheet>
   );
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     gap: 15,
+    zIndex:20
   },
   titleText: {
     fontSize: 22,
@@ -131,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DriverRidesBS;
+export default DriverRideHistory;
