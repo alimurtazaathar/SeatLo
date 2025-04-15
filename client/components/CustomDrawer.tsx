@@ -9,7 +9,7 @@ export default function CustomDrawer() {
           <View style={{padding:20,paddingTop:60,marginBottom:'auto' }}>
               <Link href="/home" asChild>
                   <Pressable>
-                      <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20,color:'white' }}>
+                      <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 20,color:'black' }}>
                         Mazdoor Monki
                       </Text>
                   
@@ -19,24 +19,24 @@ export default function CustomDrawer() {
               {/* Drawer Items */}
               <Link href="/home/complaint" asChild>
                 <Pressable style={{ paddingVertical: 10 }}>
-                  <Text style={{ fontSize: 16 ,color:'white'}}>Complaint</Text>
+                  <Text style={{ fontSize: 16 ,color:'black',fontWeight:"bold"}}>Complaint</Text>
                 </Pressable>
               </Link>
               
               <Link href="/home/contact" asChild>
                 <Pressable style={{ paddingVertical: 10 }}>
-                  <Text style={{ fontSize: 16 ,color:'white'}}>Contact Us</Text>
+                  <Text style={{ fontSize: 16 ,color:'black',fontWeight:"bold"}}>Contact Us</Text>
                 </Pressable>
               </Link>
               <Link href="/home/settings" asChild>
                 <Pressable style={{ paddingVertical: 10}}>
-                  <Text style={{ fontSize: 16 ,color:'white'}}>Settings</Text>
+                  <Text style={{ fontSize: 16 ,color:'black',fontWeight:"bold"}}>Settings</Text>
                 </Pressable>
               </Link>
               
                   <Link href="/" asChild>
                     <Pressable style={{ paddingVertical: 30}}>
-                      <Text style={{ color:'red',fontSize:15 }}>Logout</Text>
+                      <Text style={{ color:'red',fontSize:15,fontWeight:"bold" }}>Logout</Text>
                     </Pressable>
                   </Link>
           </View>

@@ -59,7 +59,7 @@ export default function AdminHome() {
     setShowAuthModal(true);
     setPassword("");
     setAuthMessage("");
-
+    router.replace("/");
     
     modalOpacity.value = 1;
     modalScale.value = 1;

@@ -46,10 +46,10 @@ const handleContinue = () => {
           <GestureHandlerRootView style={{ flex: 1 }}>
       
         <SafeAreaView style={styles.container}>
-          <Text style={{ color: "white", fontSize: 100, fontFamily: "Vercetti", marginLeft: 10,marginTop:150}}>
+          <Text style={{ color: "#141414", fontSize: 100, fontFamily: "Vercetti", marginLeft: 10,marginTop:150}}>
             SeatLo
           </Text>
-          <Text style={{ marginLeft: 20, fontWeight: "200", color: "white", fontSize: 15 }}>
+          <Text style={{ marginLeft: 20, fontWeight: "200", color: "#141414", fontSize: 15 }}>
             Join us to safar, or suffer.
           </Text>
         <BottomSheet
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     // alignItems: "center",
   },
   label: {
-    color: "white",
+    color: "#8b5cf6",
     fontSize: 16,
     marginBottom: 10,
     alignSelf: "flex-start",
@@ -119,5 +119,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
-  buttonText: { color: "white", fontWeight: "bold" },
+  buttonText: { color: "black", fontWeight: "bold" },
 });
