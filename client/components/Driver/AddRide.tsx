@@ -19,8 +19,7 @@ interface FormData {
   carName: string;
   licenseNumber: string;
   seats: string;
-  hours:number;
-  minutes:number;
+  time:{}
 }
 
 interface Stop {
