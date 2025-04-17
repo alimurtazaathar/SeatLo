@@ -30,7 +30,7 @@ const RideItems: React.FC<RideProps> = ({ id, name, location, onPress, History})
     <View style={styles.rideItemContainer}>
         {/* <View style={styles.header}> */}
           <Pressable style={{padding:20,flex:1}} onPress={onPress}>
-            <Text style={styles.rideText} numberOfLines={0.5} ellipsizeMode="tail">{!History && name } {location}</Text>
+            <Text style={styles.rideText} numberOfLines={1} ellipsizeMode="tail">{!History && name } {location}</Text>
             <View style={{display:'flex',flexDirection:'row'}}>
               <Text style={styles.infoText}>View details</Text>
               <Ionicons name="chevron-forward-outline" color={"gray"}/>
