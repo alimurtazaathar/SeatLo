@@ -1,6 +1,13 @@
-import { useContext, createContext, type PropsWithChildren } from 'react';
+//ios: 840323221565-3uhjqdn83sn3k92bg8haqp833rp1vt6b.apps.googleusercontent.com
+//andorid: 840323221565-s0uqb9hjqenc2uqu54uge934ublh3njl.apps.googleusercontent.com
+import { useContext, createContext, type PropsWithChildren, useState } from 'react';
 import { useStorageState } from './useStorageState';
 import {router}from 'expo-router'
+import * as AuthSession from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google'
+WebBrowser.maybeCompleteAuthSession();
+
 const AuthContext = createContext<{
   signIn: () => void;
   signOut: () => void;
@@ -24,15 +31,24 @@ export function useSession() {
 
   return value;
 }
-
+const redirectUri = AuthSession.makeRedirectUri({
+  useProxy: true,
+});
+console.log(redirectUri);
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
-
+  const [userInfo,setUserInfo]=useState(null);
+  const [request,response,promptAsync]=Google.useAuthRequest(
+    {
+      androidClientId:"840323221565-s0uqb9hjqenc2uqu54uge934ublh3njl.apps.googleusercontent.com",
+      iosClientId:"840323221565-3uhjqdn83sn3k92bg8haqp833rp1vt6b.apps.googleusercontent.com"
+    }
+  )
   return (
     <AuthContext.Provider
       value={{
         signIn: () => {
-          //add google login logic here
+          promptAsync();
           setSession('xxx');
         },
         signOut: () => {
