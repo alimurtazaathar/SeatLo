@@ -11,8 +11,9 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from "expo-router";
 
-const ComplaintScreen = ({ navigation}) => {
+const ComplaintScreen = ({}) => {
   const [category, setCategory] = useState('app');
   const [severity, setSeverity] = useState('medium');
   const [tripId, setTripId] = useState('');
@@ -59,36 +60,38 @@ const ComplaintScreen = ({ navigation}) => {
     setShowSeverityDropdown(false);
   };
 
-  const handleSubmit = () => {
-    if (!category || !description) {
-      Alert.alert('Error', 'Please fill in all required fields');
-      return;
-    }
-
-    setSubmitting(true);
+      
+      const handleSubmit = () => {
+        if (!category || !description) {
+          Alert.alert('Error', 'Please fill in all required fields');
+          return;
+        }
     
-    // Simulate API call
-    setTimeout(() => {
-      setSubmitting(false);
-      
-      // Generate a random complaint ID
-      const complaintId = 'C' + Math.floor(100000 + Math.random() * 900000);
-      
-      Alert.alert(
-        'Complaint Submitted',
-        `Your complaint has been registered with ID: ${complaintId}. We'll investigate and get back to you within 48 hours.`,
-        [{ text: 'OK', onPress: () => {
-          // Reset form
-          setCategory('app');
-          setSeverity('medium');
-          setTripId('');
-          setDescription('');
+        setSubmitting(true);
+        
+        // Simulate API call
+        setTimeout(() => {
+          setSubmitting(false);
           
-          navigation.goBack();
-        }}]
-      );
-    }, 1500);
-  };
+          // Generate a random complaint ID
+          const complaintId = 'C' + Math.floor(100000 + Math.random() * 900000);
+          
+          Alert.alert(
+            'Complaint Submitted',
+            `Your complaint has been registered with ID: ${complaintId}. We'll investigate and get back to you within 48 hours.`,
+            [{ text: 'OK', onPress: () => {
+              // Reset form
+              setCategory('app');
+              setSeverity('medium');
+              setTripId('');
+              setDescription('');
+              
+              
+              router.replace("/complaint");
+            }}]
+          );
+        }, 1500);
+      };
 
   // Helper function to get label from value
   const getLabelFromValue = (options:any, value:any) => {
