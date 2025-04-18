@@ -1,7 +1,6 @@
 const { Sequelize } = require('sequelize');
 const sequelize = require('../config/database'); 
 
-
 // Import models
 const User = require('./Users');
 const Car = require('./Cars');
@@ -15,10 +14,10 @@ const Notification = require('./Notifications');
 User.hasMany(Car, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 Car.belongsTo(User, { foreignKey: 'user_id' });
 
-User.hasMany(Ride, { foreignKey: 'driver_id', onDelete: 'CASCADE', as: 'driver' });
-Ride.belongsTo(User, { foreignKey: 'driver_id', as: 'driver' });
+User.hasMany(Ride, { foreignKey: 'driver_id', onDelete: 'CASCADE' });
+Ride.belongsTo(User, { foreignKey: 'driver_id' });
 
-Ride.hasMany(RideStop, { foreignKey: 'ride_id', onDelete: 'CASCADE', as: 'stops' });
+Ride.hasMany(RideStop, { foreignKey: 'ride_id', onDelete: 'CASCADE' });
 RideStop.belongsTo(Ride, { foreignKey: 'ride_id' });
 
 Ride.hasMany(RideRequest, { foreignKey: 'ride_id', onDelete: 'CASCADE' });
@@ -40,7 +39,7 @@ User.hasMany(Notification, { foreignKey: 'user_id', onDelete: 'CASCADE' });
 Notification.belongsTo(User, { foreignKey: 'user_id' });
 
 // Ensure Ride and Car are associated properly
-Ride.belongsTo(Car, { foreignKey: 'car_id', onDelete: 'SET NULL', as: 'car' });  // `as: 'car'` is crucial
+Ride.belongsTo(Car, { foreignKey: 'car_id', onDelete: 'SET NULL' });
 Car.hasMany(Ride, { foreignKey: 'car_id' });
 
 // Export models

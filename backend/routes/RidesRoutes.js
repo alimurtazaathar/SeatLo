@@ -1,5 +1,3 @@
-//delete this comment
-
 // routes/ridesRoutes.js
 
 const express = require('express');
@@ -11,5 +9,8 @@ router.post('/create', ridesController.createRide);
 
 // Get all available rides
 router.get('/all', ridesController.getAllRides);
+
+// Get specific ride details
+router.get('/:rideId', ridesController.getRideDetails);
 
 module.exports = router;
