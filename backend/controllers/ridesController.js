@@ -142,3 +142,35 @@ exports.getRideDetails = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+exports.createRideRequest = async (req, res) => {
+  try {
+    const { rideId, userId } = req.params;  // Getting rideId and userId from the URL
+    const { status } = req.body; // Getting status from the body of the request
+
+    // Find if the ride exists
+    const ride = await Ride.findByPk(rideId);
+    if (!ride) {
+      return res.status(404).json({ message: 'Ride not found' });
+    }
+
+    // Find if the user exists
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Create a new ride request
+    const rideRequest = await RideRequest.create({
+      ride_id: rideId,
+      passenger_id: userId,
+      status: status,  // Assuming status is provided in the body
+    });
+
+    // Return the created ride request
+    res.status(201).json({ message: 'Ride request created successfully', rideRequest });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

@@ -4,11 +4,29 @@ const { User, Car, Ride, RideStop, RideRequest, Rating, Notification, RideHistor
 
 // Import custom route files
 const rideRoutes = require('./routes/RidesRoutes');
+const carRoutes = require('./routes/CarRoutes');
+
 
 const PORT = 5000;
 const app = express();
 
 app.use(express.json()); // JSON middleware
+
+// So `/api/rides/all` will hit the GET all rides route
+app.use('/api/rides', rideRoutes);
+app.use('/api/cars', carRoutes);
+
+
+// API to Get All Users (Using Raw SQL)
+app.get('/viewusers', async (req, res) => {
+  try {
+    const [users] = await sequelize.query("SELECT * FROM users");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // Don't sync the database, just start the server
 // (You can comment the sync code if you don't need it right now)
@@ -25,17 +43,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
-// So `/api/rides/all` will hit the GET all rides route
-app.use('/api/rides', rideRoutes);
-
-// API to Get All Users (Using Raw SQL)
-app.get('/viewusers', async (req, res) => {
-  try {
-    const [users] = await sequelize.query("SELECT * FROM users");
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // Other API routes go here...
