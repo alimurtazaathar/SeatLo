@@ -5,6 +5,7 @@ const { User, Car, Ride, RideStop, RideRequest, Rating, Notification, RideHistor
 // Import custom route files
 const rideRoutes = require('./routes/RidesRoutes');
 const carRoutes = require('./routes/CarRoutes');
+const usersRoutes = require('./routes/usersRoutes'); // Adjust the path if needed
 
 
 const PORT = 5000;
@@ -15,6 +16,8 @@ app.use(express.json()); // JSON middleware
 // So `/api/rides/all` will hit the GET all rides route
 app.use('/api/rides', rideRoutes);
 app.use('/api/cars', carRoutes);
+app.use('/api/users', usersRoutes);
+
 
 
 // API to Get All Users (Using Raw SQL)
