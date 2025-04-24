@@ -1,10 +1,18 @@
 import { useContext, createContext, type PropsWithChildren } from 'react';
 import { useStorageState } from './useStorageState';
-import {router}from 'expo-router'
+import { router } from 'expo-router';
+
+interface UserData {
+  email: string;
+  name: string;
+  picture: string;
+  accessToken: string;
+}
+
 const AuthContext = createContext<{
-  signIn: () => void;
+  signIn: (userData: UserData) => void;
   signOut: () => void;
-  session?: string | null;
+  session?: UserData | null;
   isLoading: boolean;
 }>({
   signIn: () => null,
@@ -31,15 +39,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
   return (
     <AuthContext.Provider
       value={{
-        signIn: () => {
-          //add google login logic here
-          setSession('xxx');
+        signIn: (userData: UserData) => {
+          setSession(JSON.stringify(userData));
         },
         signOut: () => {
           setSession(null);
-          router.replace('/')
+          router.replace('/');
         },
-        session,
+        session: session ? JSON.parse(session) : null,
         isLoading,
       }}>
       {children}

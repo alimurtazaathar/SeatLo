@@ -130,7 +130,7 @@ const SettingsScreen = () => {
           <SettingsItem 
             title="Contact Us" 
             icon="mail-outline" 
-            onPress={() =>  router.replace('/(app)/(home)/contact')}
+            onPress={() =>  router.replace('/(app)/(home)/contactUS')}
           />
           <SettingsItem 
             title="Submit a Complaint" 

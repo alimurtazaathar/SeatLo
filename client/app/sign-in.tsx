@@ -20,8 +20,13 @@ export default function SignIn() {
           </Text>
 
             <Pressable onPress={()=>{
-                signIn();
-                router.replace('/');
+                signIn({
+                  email: 'user@example.com',
+                  name: 'User',
+                  picture: '',
+                  accessToken: 'dummy-token'
+                });
+                router.replace('/(app)/(home)');
             }} style={{backgroundColor:'white',width:'40%',marginHorizontal:'auto',borderRadius:40,padding:10}}><Text style={{textAlign:'center',fontWeight:'bold'}}>Signin with Google</Text></Pressable>
         </SafeAreaView>
   );
