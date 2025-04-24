@@ -74,7 +74,7 @@ const SettingsScreen = () => {
           headerStyle: {
             backgroundColor: '#141414',
           },
-          headerTintColor: '#FFFFFF',
+          headerTintColor: '#8b5cf6',
           headerTitleStyle: {
             fontWeight: 'bold',
           },
@@ -113,7 +113,7 @@ const SettingsScreen = () => {
             type="toggle"
             value={notificationsEnabled}
             onValueChange={setNotificationsEnabled}
-            onPress={() => {}} // Add empty onPress to satisfy TypeScript
+            onPress={() => {}} 
           />
           <SettingsItem 
             title="Dark Mode" 
@@ -121,7 +121,7 @@ const SettingsScreen = () => {
             type="toggle"
             value={darkMode}
             onValueChange={setDarkMode}
-            onPress={() => {}} // Add empty onPress to satisfy TypeScript
+            onPress={() => {}}
           />
         </View>
         
@@ -130,7 +130,7 @@ const SettingsScreen = () => {
           <SettingsItem 
             title="Contact Us" 
             icon="mail-outline" 
-            onPress={() =>  router.replace('/(app)/(home)/contact')}
+            onPress={() =>  router.replace('/(app)/(home)/contactUS')}
           />
           <SettingsItem 
             title="Submit a Complaint" 
@@ -167,6 +167,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#141414',
   },
+
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginVertical: 12,
+    color: '#8b5cf6',
+  },
+  
   section: {
     marginBottom: 20,
     backgroundColor: '#222222',
@@ -183,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 12,
-    color: '#333333',
+    color: '#8b5cf6',
   },
   settingItem: {
     flexDirection: 'row',

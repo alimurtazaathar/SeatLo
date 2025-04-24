@@ -14,7 +14,7 @@ export default function Layout() {
 
     <Drawer drawerContent={() => <CustomDrawer />} screenOptions={{headerStyle: { backgroundColor: '#141414' },drawerStyle: { backgroundColor: '#8b5cf6' },headerTintColor: '#8b5cf6',  }}>
               <Drawer.Screen name="index" options={{headerTitle:'',}}/>
-              <Drawer.Screen name="contact" options={{headerTitle:'Contact Us',headerTintColor:'white'}}/>
+              <Drawer.Screen name="contact" options={{headerTitle:'Contact Us'}}/>
               <Drawer.Screen name="complaint" options={{headerTitle:'Complaint'}}/>
               <Drawer.Screen name="settings" options={{headerTitle:'Settings'}}/>
         

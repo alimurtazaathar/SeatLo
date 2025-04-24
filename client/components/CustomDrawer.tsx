@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function CustomDrawer() {
   const { signOut } = useSession();
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [userName, setUserName] = useState("John Doe");
+  const [userName, setUserName] = useState("Mazdoor Bhai");
   const [isEditingName, setIsEditingName] = useState(false);
 
   const pickImage = async () => {
@@ -63,14 +63,14 @@ export default function CustomDrawer() {
           </Pressable>
         </View>
 
-        <Text style={styles.profileEmail}>john@example.com</Text>
+        <Text style={styles.profileEmail}>k224150@nu.edu.pk</Text>
       </View>
 
       {/* Navigation Links */}
       <View style={{ padding: 20, paddingTop: 30, marginBottom: 'auto' }}>
         <Link href="/(app)/(home)" asChild>
           <Pressable>
-            <Text style={styles.linkText}>Mazdoor Monki</Text>
+            <Text style={styles.linkText}>Home</Text>
           </Pressable>
         </Link>
 

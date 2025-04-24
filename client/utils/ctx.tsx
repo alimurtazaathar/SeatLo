@@ -8,7 +8,7 @@ const AuthContext = createContext<{
   signIn: (idToken:string|null) => void;
  
   signOut: () => void;
-  session?: string | null;
+  session?: UserData | null;
   isLoading: boolean;
   isProfileComplete:boolean;
 
@@ -82,7 +82,7 @@ useEffect(() => {
           setSession(null);
           router.replace('/sign-in')
         },
-        session,
+        session: session ? JSON.parse(session) : null,
         isLoading,
         isProfileComplete
       }}>
