@@ -15,20 +15,34 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
 import { TimePickerModal } from 'react-native-paper-dates';
+import SearchBox from "../SearchBox";
+interface RideDetails {
+  id: number;
+  name: string;
+  location: string;
+  History?: true;
+  onPress: () => void;
+
+}
+
+
 interface FormData {
   carName: string;
   licenseNumber: string;
   seats: string;
-  time:{}
+  time:{hours:string,minutes:string}
 }
 
 interface Stop {
   text: string;
 }
 
+
+
 interface AddRideProps {
   onSubmit: (data: FormData & { stops: Stop[] }) => void;
-
+  ride?:RideDetails|null
+  isRepool?:boolean
 }
 
 const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
@@ -51,6 +65,9 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
   const [stopInput, setStopInput] = useState("");
   const [isReveresed, setIsReversed] = useState(false);
   const [isVisible,setIsVisible]=useState(false);
+  const [hours,setHours]=useState(0);
+  const [minutes,setMinutes]=useState(0);
+  // console.log(ride)
   const onDismiss=React.useCallback(()=>{
     setIsVisible(false)
   },[setIsVisible])
@@ -58,6 +75,8 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
   const onConfirm = React.useCallback(
     ({ hours, minutes }:{ hours: number; minutes: number }) => {
       setIsVisible(false);
+      setHours(hours);
+      setMinutes(minutes);
       console.log({ hours, minutes });
     },
     [setIsVisible]
@@ -104,6 +123,8 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
       enablePanDownToClose={true}
       backgroundStyle={{ backgroundColor: "#141414" }}
       handleIndicatorStyle={{ backgroundColor: "gray" }}
+      // enableContentPanningGesture={false}
+      // enableHandlePanningGesture={false}
     >
       <BottomSheetView style={styles.scrollContainer}>
         <FlatList
@@ -122,7 +143,14 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
               <Text style={styles.header}>Enter Ride Details</Text>
 
                <TextInputLabel label="Enter time of departure"/>
-               <Pressable onPress={()=>{setIsVisible(true)}}><Text>Click Me</Text></Pressable>
+               <Pressable onPress={()=>{setIsVisible(true)}} style={{display:'flex',flexDirection:'row'}}>
+
+               <View style={styles.timeCard}><Text style={{textAlign:'center'}}>{hours}</Text></View>
+               <Text style={{color:'gray'}}>:</Text>
+               <View style={styles.timeCard}><Text style={{textAlign:'center'}}>{minutes}</Text></View>
+
+
+               </Pressable>
               {/* <Controller
               control={control}
               name="time"
@@ -238,7 +266,7 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
                     }}
                   />
                 </Pressable>
-
+                    <SearchBox/>
                 {!isReveresed ? destination : stopInputField}
               {/* </View> */}
 
@@ -385,6 +413,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginTop: 20,
   },
+  timeCard:{backgroundColor:'#fff',height:40,width:40,aspectRatio:1,borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center'}
 });
 
 export default AddRide;

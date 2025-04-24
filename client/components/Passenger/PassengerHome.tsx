@@ -27,6 +27,8 @@ const PassengerHome = () => {
         
         <Text style={styles.headerText}>Rides Near You</Text>
         <Text style={{fontSize:10,color:'white',marginBottom: 10,}}>Choose rides based on your preference</Text>
+        
+       
         {rides.map((ride) => (
           <RideItems
             key={ride.id}

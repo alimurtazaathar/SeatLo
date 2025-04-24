@@ -1,26 +1,25 @@
-//ios: 840323221565-3uhjqdn83sn3k92bg8haqp833rp1vt6b.apps.googleusercontent.com
-//andorid: 840323221565-s0uqb9hjqenc2uqu54uge934ublh3njl.apps.googleusercontent.com
-import { useContext, createContext, type PropsWithChildren, useState } from 'react';
+import { useContext, createContext, type PropsWithChildren, useState,useEffect } from 'react';
 import { useStorageState } from './useStorageState';
 import {router}from 'expo-router'
-import * as AuthSession from 'expo-auth-session';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google'
-WebBrowser.maybeCompleteAuthSession();
+
 
 const AuthContext = createContext<{
-  signIn: () => void;
+  // signIn: (authToken:string|null) => void;
+  signIn: (idToken:string|null) => void;
+ 
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
+  isProfileComplete:boolean;
+
 }>({
   signIn: () => null,
   signOut: () => null,
   session: null,
   isLoading: false,
+  isProfileComplete:false,
 });
 
-// This hook can be used to access the user info.
 export function useSession() {
   const value = useContext(AuthContext);
   if (process.env.NODE_ENV !== 'production') {
@@ -31,32 +30,61 @@ export function useSession() {
 
   return value;
 }
-const redirectUri = AuthSession.makeRedirectUri({
-  useProxy: true,
-});
-console.log(redirectUri);
+
 export function SessionProvider({ children }: PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session');
   const [userInfo,setUserInfo]=useState(null);
-  const [request,response,promptAsync]=Google.useAuthRequest(
-    {
-      androidClientId:"840323221565-s0uqb9hjqenc2uqu54uge934ublh3njl.apps.googleusercontent.com",
-      iosClientId:"840323221565-3uhjqdn83sn3k92bg8haqp833rp1vt6b.apps.googleusercontent.com"
+  const [isProfileComplete,setIsProfileComplete]=useState(false);
+//   useEffect(() => {
+  
+//     if (session) {
+//       // user profile data available or not??!
+//       // fetch('https://your-api.com/profile/status', {
+//       //   headers: { Authorization: `Bearer ${session}` },
+//       // })
+//       // .then(res => res.json())
+//       // .then(data => {
+//       //   setIsProfileComplete(true); // or whatever your key is
+//       // });
+// setIsProfileComplete(true);
+
+//     }
+   
+//   }, [session]);
+
+useEffect(() => {
+  if (session) {
+    //making api endpoint here
+    //for now
+    setIsProfileComplete(false);
+
+    if (isProfileComplete) {
+      // Redirect to the home page if the profile is complete
+      router.replace('/');
+    } else {
+      // Redirect to the form page if the profile is incomplete
+      router.replace('/form');
     }
-  )
+  } else {
+    // Redirect to the sign-in page if no session exists
+    router.replace('/sign-in');
+  }
+}, [session, isProfileComplete]);
+
   return (
     <AuthContext.Provider
       value={{
-        signIn: () => {
-          promptAsync();
-          setSession('xxx');
+        // signIn: (authToken:string|null) => {
+          signIn: (idToken) => {
+          setSession(idToken);
         },
         signOut: () => {
           setSession(null);
-          router.replace('/')
+          router.replace('/sign-in')
         },
         session,
         isLoading,
+        isProfileComplete
       }}>
       {children}
     </AuthContext.Provider>

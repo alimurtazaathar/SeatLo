@@ -47,6 +47,7 @@ const DriverHome = () => {
   };
   const addRide = () => {
    addRideSheetRef.current?.expand();
+   
   };
   const handleFormSubmit = (data: any) => {
     console.log('Submitted form data:', data);
@@ -65,6 +66,7 @@ const DriverHome = () => {
             location={ride.route}
             History={true}
             onPress={() => openBottomSheet(ride)}
+            onReuse={()=>addRide()}
           />
         ))}
 

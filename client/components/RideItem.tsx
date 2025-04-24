@@ -8,7 +8,7 @@ interface RideProps {
   location: string;
   History?: true;
   onPress: () => void;
-
+  onReuse?:()=>void;
 }
 
 function truncateText(text:string, maxLength:number) {
@@ -20,7 +20,7 @@ function truncateText(text:string, maxLength:number) {
   return (lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated) + "...";
 }
 
-const RideItems: React.FC<RideProps> = ({ id, name, location, onPress, History}) => {
+const RideItems: React.FC<RideProps> = ({ id, name, location, onPress, History,onReuse}) => {
   console.log("Ride ID:", id);
   
 
@@ -37,7 +37,7 @@ const RideItems: React.FC<RideProps> = ({ id, name, location, onPress, History})
             </View>
           </Pressable>
           {History && (
-            <Pressable style={styles.reuseButton}>
+            <Pressable style={styles.reuseButton} onPress={onReuse}>
               <Ionicons name="refresh" size={24} color="white" />
               <Text style={styles.reuseText}>Repool</Text>
             </Pressable>
@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     // borderWidth: 2,
     borderRadius: 20,
+    borderColor:'#141414',
+    borderWidth:2,
     // padding: 20,
      display: "flex",
     flexDirection: "row",
@@ -81,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50", // Green for reuse
     paddingVertical: 5,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    borderRadius: 18,
     borderBottomLeftRadius:0,
     borderTopLeftRadius:0,
     // padding:10,

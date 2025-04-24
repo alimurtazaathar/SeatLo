@@ -1,3 +1,4 @@
+import 'react-native-get-random-values';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -73,10 +74,12 @@ const styles = StyleSheet.create({
     flex: 1,
     display:"flex",
     justifyContent:'flex-start',
-    backgroundColor: '#141414',
+    // backgroundColor: '#141414',
+    backgroundColor: '#8454F5',
+   
     width: '100%',
-    borderWidth:2,
-    borderColor:'white'
+    // borderWidth:2,
+    // borderColor:'white'
   },
   header: {
     flexDirection: 'row',
@@ -93,7 +96,10 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal:5,
     flex:1,
-    height:'100%'
+    height:'100%',
+    // display:'flex',
+    // justifyContent:'center',
+    // alignItems:'center'
   },
   fab: {
     position:'fixed',
