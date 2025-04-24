@@ -11,11 +11,18 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const ContactItem = ({ title, icon, description, onPress }) => {
+type Props={
+  title:string;
+  icon:String;
+  description:string;
+  onPress:()=>void;
+}
+
+const ContactItem = ({ title, icon, description, onPress }:Props) => {
   return (
     <TouchableOpacity style={styles.contactItem} onPress={onPress}>
       <View style={styles.contactIconContainer}>
-        <Ionicons name={icon} size={24} color="#4A80F0" />
+        <Ionicons name={icon as any} size={24} color="#4A80F0" />
       </View>
       <View style={styles.contactContent}>
         <Text style={styles.contactTitle}>{title}</Text>

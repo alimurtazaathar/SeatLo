@@ -68,25 +68,25 @@ export default function CustomDrawer() {
 
       {/* Navigation Links */}
       <View style={{ padding: 20, paddingTop: 30, marginBottom: 'auto' }}>
-        <Link href="/(app)/(home)" asChild>
+        <Link href="/(protected)/(home)" asChild>
           <Pressable>
             <Text style={styles.linkText}>Home</Text>
           </Pressable>
         </Link>
 
-        <Link href="/(app)/(home)/complaint" asChild>
+        <Link href="/(protected)/(home)/complaint" asChild>
           <Pressable style={styles.link}>
             <Text style={styles.linkText}>Complaint</Text>
           </Pressable>
         </Link>
 
-        <Link href="/(app)/(home)/contact" asChild>
+        <Link href="/(protected)/(home)/contact" asChild>
           <Pressable style={styles.link}>
             <Text style={styles.linkText}>Contact Us</Text>
           </Pressable>
         </Link>
 
-        <Link href="/(app)/(home)/settings" asChild>
+        <Link href="/(protected)/(home)/settings" asChild>
           <Pressable style={styles.link}>
             <Text style={styles.linkText}>Settings</Text>
           </Pressable>
