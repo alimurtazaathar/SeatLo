@@ -5,7 +5,7 @@ const { User, Car, Ride, RideStop, RideRequest, Rating, Notification, RideHistor
 // Import custom route files
 const rideRoutes = require('./routes/RidesRoutes');
 const carRoutes = require('./routes/CarRoutes');
-const usersRoutes = require('./routes/usersRoutes'); // Adjust the path if needed
+const usersRoutes = require('./routes/userRoutes'); // Adjust the path if needed
 
 
 const PORT = 5000;

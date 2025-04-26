@@ -42,5 +42,10 @@ Notification.belongsTo(User, { foreignKey: 'user_id' });
 Ride.belongsTo(Car, { foreignKey: 'car_id', onDelete: 'SET NULL' });
 Car.hasMany(Ride, { foreignKey: 'car_id' });
 
+// Add the missing association between Rating and Ride
+Rating.belongsTo(Ride, { foreignKey: 'ride_id' });  // Rating belongs to a Ride
+Ride.hasMany(Rating, { foreignKey: 'ride_id' });    // A Ride can have many Ratings
+
+
 // Export models
 module.exports = { sequelize, User, Car, Ride, RideStop, RideRequest, Rating, Notification };
