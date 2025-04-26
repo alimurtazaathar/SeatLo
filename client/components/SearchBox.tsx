@@ -1,20 +1,34 @@
 import React from 'react';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
-const SearchBox= () => {
+
+
+type Props={
+  closeSheet:()=>void;
+  setStops: React.Dispatch<React.SetStateAction<string[]>>;
+  
+
+}
+
+const SearchBox= ({closeSheet,setStops}:Props) => {
   return (
     <GooglePlacesAutocomplete
-      placeholder='Search'
-      debounce={200}               // ⏱ wait 400 ms after last keystroke
-      minLength={2}                // only start after 2 chars (optional)
-      enablePoweredByContainer={false}  // cleaner UI (optional)
+      placeholder='Search a stop'
+      debounce={200}               
+      minLength={2}               
+      enablePoweredByContainer={false} 
+      fetchDetails={true}
       onPress={(data, details = null) => {
         // 'details' is provided when fetchDetails = true
-        console.log(data, details);
+        // console.log(data, details);
+       setStops((prev)=>[...prev, data.structured_formatting.main_text])
+
+          closeSheet();
       }}
       query={{
-        key: 'AIzaSyAUy4oHW2ASPfv8jmyHVsRxxeV3chljYVU',
+        key:'AIzaSyAUy4oHW2ASPfv8jmyHVsRxxeV3chljYVU',
         language: 'en',
+        components:'country:pk'
       }}
     />
   );

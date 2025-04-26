@@ -4,7 +4,6 @@ import {router}from 'expo-router'
 
 
 const AuthContext = createContext<{
-  // signIn: (authToken:string|null) => void;
   signIn: (idToken:string|null) => void;
  
   signOut: () => void;
@@ -56,7 +55,7 @@ useEffect(() => {
   if (session) {
     //making api endpoint here
     //for now
-    setIsProfileComplete(false);
+    setIsProfileComplete(true);
 
     if (isProfileComplete) {
       // Redirect to the home page if the profile is complete

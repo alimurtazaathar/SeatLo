@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useMemo, useState } from "react";
+import React, { forwardRef, useCallback, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -7,15 +7,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  Platform,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import BottomSheet, {
   BottomSheetView,
   BottomSheetTextInput,
+  BottomSheetBackdrop
 } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
-import { TimePickerModal } from 'react-native-paper-dates';
+import { TimePickerModal,DatePickerModal } from 'react-native-paper-dates';
 import SearchBox from "../SearchBox";
+import { PaperProvider } from "react-native-paper";
+import SearchStops from "../SearchStops";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 interface RideDetails {
   id: number;
   name: string;
@@ -33,14 +38,8 @@ interface FormData {
   time:{hours:string,minutes:string}
 }
 
-interface Stop {
-  text: string;
-}
-
-
-
 interface AddRideProps {
-  onSubmit: (data: FormData & { stops: Stop[] }) => void;
+  onSubmit: (data: FormData & { stops: string[] }) => void;
   ride?:RideDetails|null
   isRepool?:boolean
 }
@@ -58,28 +57,51 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
     },
   });
 
-  const snapPoints = useMemo(() => ["100%"], []);
+  const snapPoints = useMemo(() => ["90%"], []);
   const handleSheetChanges = useCallback((index: number) => {}, []);
 
-  const [stops, setStops] = useState<Stop[]>([]);
+  const [stops, setStops] = useState<string[]>([]);
   const [stopInput, setStopInput] = useState("");
   const [isReveresed, setIsReversed] = useState(false);
-  const [isVisible,setIsVisible]=useState(false);
+  const [isClockVisible,setIsClockVisible]=useState(false);
+  const [date, setDate] = useState(new Date());
+const [isDateVisible, setIsDateVisible] = useState(false);
   const [hours,setHours]=useState(0);
   const [minutes,setMinutes]=useState(0);
-  // console.log(ride)
+  const searchRef=useRef<BottomSheet>(null);
+  const searchStop=()=>{
+    searchRef.current?.expand();
+  }
+  const closeSearchStop=()=>{
+    searchRef.current?.close();
+
+  }
+  const onDateDismiss=React.useCallback(()=>{
+    setIsDateVisible(false)
+  },[setIsDateVisible])
+
+  const onConfirmDate = useCallback(
+    (params: { date :any}) => {
+      setIsDateVisible(false);
+      setDate(params.date);
+    },
+    [setIsDateVisible]
+  );
+
+
+  
   const onDismiss=React.useCallback(()=>{
-    setIsVisible(false)
-  },[setIsVisible])
+    setIsClockVisible(false)
+  },[setIsClockVisible])
 
   const onConfirm = React.useCallback(
     ({ hours, minutes }:{ hours: number; minutes: number }) => {
-      setIsVisible(false);
+      setIsClockVisible(false);
       setHours(hours);
       setMinutes(minutes);
       console.log({ hours, minutes });
     },
-    [setIsVisible]
+    [setIsClockVisible]
   );
 
   const invertStops = () => {
@@ -90,48 +112,92 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
   const addStop = () => {
     setStopInput("");
     if (stopInput.trim()) {
-      setStops((prev) => [...prev, { text: stopInput.trim() }]);
+      setStops((prev) => [...prev, stopInput.trim() ]);
     }
   };
   const removeStop = (indexToRemove: number) => {
     setStops((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
+  const formatTime = (h: number, m: number) => {
+    const suffix = h >= 12 ? "PM" : "AM";
+    const formattedHour = h % 12 === 0 ? 12 : h % 12;
+    return `${String(formattedHour).padStart(2, "0")}:${String(m).padStart(2, "0")} ${suffix}`;
+  };
+  const formatDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = { weekday: 'short', month: 'short', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
+  
   const destination = (
     <View style={[styles.stopItem, { width: "100%" ,alignContent:'center'}]}>
-      <Text style={{ color: "white",height:20,textAlignVertical:'center' }}>Fast NUCES</Text>
+      <Text style={{ color: "#ffff",height:20,textAlignVertical:'center' }}>Fast NUCES</Text>
     </View>
   );
 
   const stopInputField = (
-    <BottomSheetTextInput
-      style={styles.input}
-      placeholder="Enter stop"
-      value={stopInput}
-      placeholderTextColor={"gray"}
-      onChangeText={setStopInput}
+    <Pressable
+    onPress={searchStop}
+    style={[
+      styles.addButton,
+      {
+        backgroundColor: "#222",
+        width: "100%",
+        alignItems: "center",
+        marginVertical: 5,
+        borderRadius: 10,
+        padding: 10,
+      },
+    ]}
+  >
+    <Ionicons
+      name="add-outline"
+      size={15}
+      style={{
+        color: "white",
+        backgroundColor: "#8b5cf6",
+        borderRadius: 15,
+        padding: 5,
+      }}
     />
-  );
+  </Pressable>
+  );  
+  const renderBackdrop = useCallback(
+		(props:any) => (
+			<BottomSheetBackdrop
+				{...props}
+				disappearsOnIndex={0}
+				appearsOnIndex={1}
+        style={{backgroundColor:'#281949'}}
+			/>
+		),
+		[]
+	);
 
 
 
   return (
+    <>
     <BottomSheet
       ref={ref}
       index={-1}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
       enablePanDownToClose={true}
-      backgroundStyle={{ backgroundColor: "#141414" }}
-      handleIndicatorStyle={{ backgroundColor: "gray" }}
-      // enableContentPanningGesture={false}
-      // enableHandlePanningGesture={false}
+      backgroundStyle={{ backgroundColor: "#8454F5"
+        // 422a7b
+
+       }}
+      //  detached={true}
+      //  bottomInset={50}
+      handleIndicatorStyle={{ backgroundColor: "#141414" }}
+      // style={{borderColor:'#141414',borderWidth:2,borderRadius:18}}
     >
       <BottomSheetView style={styles.scrollContainer}>
         <FlatList
           data={stops}
           renderItem={({ item, index }) => (
             <View style={styles.stopItem}>
-              <Text style={styles.stopText}>{item.text}</Text>
+              <Text style={styles.stopText}>{item}</Text>
               <TouchableOpacity onPress={() => removeStop(index)}>
                 <Ionicons name="trash" size={20} color="red" />
               </TouchableOpacity>
@@ -142,34 +208,35 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
             <>
               <Text style={styles.header}>Enter Ride Details</Text>
 
-               <TextInputLabel label="Enter time of departure"/>
-               <Pressable onPress={()=>{setIsVisible(true)}} style={{display:'flex',flexDirection:'row'}}>
+               <TextInputLabel label="Departure time"/>
+               <Pressable onPress={()=>{setIsClockVisible(true)}} style={{display:'flex',flexDirection:'row',alignItems:'center',gap:4}}>
 
-               <View style={styles.timeCard}><Text style={{textAlign:'center'}}>{hours}</Text></View>
-               <Text style={{color:'gray'}}>:</Text>
-               <View style={styles.timeCard}><Text style={{textAlign:'center'}}>{minutes}</Text></View>
-
+               <View style={styles.timeCard}><Text style={{textAlign:'center'}}>{formatTime(hours,minutes)} </Text><MaterialCommunityIcons name="clock-edit" size={20} color="black" /></View>
 
                </Pressable>
-              {/* <Controller
-              control={control}
-              name="time"
-              rules={{required:'Time is required'}}
-              render={({field:{onChange,value}})=>(
-                <TextInput
-                  placeholder="7:00 AM"
-                />
-
-              )}
-              />  */}
                <TimePickerModal
-          visible={isVisible}
+          visible={isClockVisible}
           onDismiss={onDismiss}
           onConfirm={onConfirm}
           hours={12}
           minutes={14}
+        
         />
+               <TextInputLabel label="Departure Date"/>
+               <Pressable onPress={()=>{setIsDateVisible(true)}} style={{display:'flex',flexDirection:'row',alignItems:'center',gap:4}}>
 
+               <View style={styles.timeCard}><Text style={{textAlign:'center'}}>{formatTime(hours,minutes)} </Text><MaterialCommunityIcons name="clock-edit" size={20} color="black" /></View>
+
+               </Pressable>
+               <DatePickerModal
+               mode="single"
+               locale="en"
+          visible={isDateVisible}
+          onDismiss={onDateDismiss}
+          onConfirm={onConfirmDate}
+          date={date}
+        
+        />
 
               <TextInputLabel label="Number of Seats" />
               <Controller
@@ -184,6 +251,7 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
                     onChangeText={onChange}
                     placeholderTextColor={"gray"}
                     keyboardType="numeric"
+
                   />
                 )}
               />
@@ -205,7 +273,7 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
                   style={{
                     padding: 5,
                     borderRadius: 10,
-                    backgroundColor: "#8b5cf6",
+                    backgroundColor: "#141414",
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
@@ -241,32 +309,8 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
               > */}
                 {!isReveresed && stopInputField}
 
-                <Pressable
-                  onPress={addStop}
-                  style={[
-                    styles.addButton,
-                    {
-                      backgroundColor: "#222",
-                      width: "100%",
-                      alignItems: "center",
-                      marginVertical: 5,
-                      borderRadius: 10,
-                      padding: 10,
-                    },
-                  ]}
-                >
-                  <Ionicons
-                    name="add-outline"
-                    size={15}
-                    style={{
-                      color: "white",
-                      backgroundColor: "#8b5cf6",
-                      borderRadius: 15,
-                      padding: 5,
-                    }}
-                  />
-                </Pressable>
-                    <SearchBox/>
+                {/* */}
+                    {/* <SearchBox/> */}
                 {!isReveresed ? destination : stopInputField}
               {/* </View> */}
 
@@ -331,8 +375,12 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
           }
         />
       </BottomSheetView>
+
     </BottomSheet>
-  );
+    <SearchStops ref={searchRef} closeSheet={closeSearchStop} stops={stops} setStops={setStops}/>
+
+  </>  
+);
 });
 
 const TextInputLabel = ({ label }: { label: string }) => (
@@ -343,11 +391,13 @@ const styles = StyleSheet.create({
   scrollContainer: {
     padding: 15,
     gap: 15,
+    flex:1,
+   
   },
   header: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "white",
+    color: "#fff",
     marginBottom: 20,
     textAlign: "center",
   },
@@ -360,20 +410,24 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    backgroundColor: "#222",
-    color: "white",
-    padding: 15,
+    backgroundColor: "#fff",
+    color: "black",
+    padding: 10,
     marginVertical: 5,
     borderRadius: 10,
+borderWidth:2,borderColor:'black',
+
   },
   colInput: {
     width: "100%",
-    backgroundColor: "#444", 
-    color: "lightgray",
-    padding: 15,
+    // backgroundColor: "#444", 
+    backgroundColor: "#fff", 
+    
+    color: "black",
+    padding: 10,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#8b5cf6",
+    borderWidth: 2,
+    borderColor: "#141414",
     fontStyle: "italic", 
   },
   
@@ -400,20 +454,21 @@ const styles = StyleSheet.create({
     color: "white",
   },
   submitButton: {
-    backgroundColor: "white",
+    backgroundColor: "#141414",
     padding: 10,
-    borderRadius: 5,
+    paddingVertical:15,
+    borderRadius: 10,
     marginTop: 20,
   },
   submitText: {
-    color: "black",
+    color: "#fff",
     textAlign: "center",
   },
   carInfoContainer: {
     flexDirection: "column",
     marginTop: 20,
   },
-  timeCard:{backgroundColor:'#fff',height:40,width:40,aspectRatio:1,borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center'}
+  timeCard:{backgroundColor:'#fff',borderColor:'#141414',borderWidth:2,borderRadius:10,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:4,padding:10}
 });
 
 export default AddRide;

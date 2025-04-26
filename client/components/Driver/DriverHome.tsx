@@ -7,7 +7,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import React, { useRef, useState } from 'react';
 import DriverRideHistory from '@/components/Driver/DriverRideHistory';
 import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
-import RideItems from '@/components/RideItem';
+import RideItems from '@/components/Driver/RideItem';
 import AddRide from './AddRide';
 import BottomSheet from "@gorhom/bottom-sheet"; 
 const driverRides = [
@@ -64,7 +64,6 @@ const DriverHome = () => {
             id={ride.id}
             name={ride.destination}
             location={ride.route}
-            History={true}
             onPress={() => openBottomSheet(ride)}
             onReuse={()=>addRide()}
           />

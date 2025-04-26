@@ -1,0 +1,76 @@
+Start Page
+    - Login with NU ID
+    - Confirm mobile phone via OTP
+    - Enter minimal info
+    - Do you have a car?
+        - If yes: open 'Enter Car Details' page
+            - Option to skip and move to Driver Page directly
+        - If no: open Passenger Page
+
+Passenger Page
+    - Easy toggle button to switch between rider and driver role
+    - View all available rides
+        - Ride cards show basic ride info
+        - If user has already requested a ride, card changes color or shows "Request Pending"
+        - Clicking on a ride opens ride details:
+            - Select stop
+            - Select number of seats
+            - Book/request ride
+            - Can request multiple rides
+            - After requesting, user can continue browsing and requesting other rides
+            - Once any driver accepts one of the requests:
+                - All other requests are canceled automatically
+            - Option to delete any pending request manually
+            - Can go to driver profile from ride card or ride details
+                - Check ratings
+                - Check profile picture
+                - Other public driver info
+    - After ride is booked:
+        - Passenger can only see their confirmed ride
+        - Ride shows details (stops, leaving time, etc.)
+        - 1 hour after ride start time, the ride is marked as finished
+        - Redirect back to view rides page
+    - Notifications
+        - New notifications for accepted, rejected, or canceled requests
+        - Accessible on this page or via notification center
+
+Driver Page
+    - Easy toggle button to switch between driver and passenger role
+    - If user hasn’t created a ride yet:
+        - Show "Create Ride" button
+            - Enter all ride details (start time, date, available seats, multiple stops)
+            - Date auto-filled with current date (can be edited)
+            - Select car (linked to user ID)
+                - If no cars exist, prompt to enter new car details
+                - Option to add another car
+            - Ride creation form pre-filled using previous rides (if available)
+                - Driver can reuse old stops and info, and just update time/date/etc.
+    - Once ride is created:
+        - Driver page shows the created ride and booking requests
+            - Requests show passenger info and number of seats requested
+            - Accept or reject individual requests
+                - Accept until all seats are filled (e.g., 4 seats → multiple accepted requests)
+                - If all seats booked, ride becomes invisible to other passengers
+                - If someone cancels, ride becomes visible again
+        - Option to delete/edit the ride
+    - Notifications
+        - Driver receives alerts for new requests, cancellations, or updates
+        - Accessible on this page or via notification center
+
+Sidebar Options
+    - Profile picture
+    - Edit profile
+    - Rides history
+        - Includes both driver and passenger roles
+        - By default, show the one matching the current page context
+    - Your ratings and reviews
+	logout option.
+
+
+
+More features:
+	Add a maps api. When the driver starts ride, his gps location can be shared to all passengers so they can 	have somme idea how long they are going to take.
+	Link with some timetable app and give ride suggestions to passengers.
+	ride buddies/favourites. you can make favourites and their rides or booking requests would be given 	priority.
+	verified option. sidebar menue has get verified option enter licence car papers etc to get verified by 	admins
+		

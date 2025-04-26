@@ -2,7 +2,7 @@ import { View, Text, StyleSheet ,Pressable} from 'react-native';
 import React, { useRef, useState } from 'react';
 import RidesBS from '@/components/Passenger/RidesBS';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import RideItems from '@/components/RideItem';
+import RideItem from '@/components/Passenger/RideItem';
 
 const rides = [
   { id: 1, name: 'Umer Nadeem', rating: 5, location: 'GC', car: 'Alto', additionalDetails: 'Reliable driver with excellent service' },
@@ -30,7 +30,7 @@ const PassengerHome = () => {
         
        
         {rides.map((ride) => (
-          <RideItems
+          <RideItem
             key={ride.id}
             id={ride.id}
             name={ride.name}

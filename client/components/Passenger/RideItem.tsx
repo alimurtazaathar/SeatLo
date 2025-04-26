@@ -20,7 +20,7 @@ function truncateText(text:string, maxLength:number) {
   return (lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated) + "...";
 }
 
-const RideItems: React.FC<RideProps> = ({ id, name, location, onPress, History,onReuse}) => {
+const RideItem: React.FC<RideProps> = ({ id, name, location, onPress, History,onReuse}) => {
   console.log("Ride ID:", id);
   
 
@@ -96,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RideItems;
+export default RideItem;

@@ -26,20 +26,14 @@ const HomeLayout = () => {
     .runOnJS(true);
   
     
-  // const flingRight = Gesture.Fling()
-  //   .direction(Directions.RIGHT)
-  //   .onEnd(() => {
-  //     console.log('swiped right')
-  //     runOnJS(setIsDriverMode)((prev) => !prev); 
-  //   }).runOnJS(true);
-
+ 
   const combinedGesture = Gesture.Exclusive(flingLeft);
 
   return (
         <GestureHandlerRootView style={{ flex: 1 }}>
     
       <PaperProvider>
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
           {/* Header Section */}
           {/* <View style={styles.header}> */}
             {/* <Text style={styles.locationText}>Location here</Text> */}
@@ -61,7 +55,7 @@ const HomeLayout = () => {
             onPress={() => setIsDriverMode(!isDriverMode)}
             color="#fff"
           /> */}
-        </SafeAreaView>
+        </View>
       </PaperProvider>
       </GestureHandlerRootView>
   );
@@ -74,8 +68,9 @@ const styles = StyleSheet.create({
     flex: 1,
     display:"flex",
     justifyContent:'flex-start',
-    // backgroundColor: '#141414',
-    backgroundColor: '#8454F5',
+    //  backgroundColor: '#8454F5',
+    // backgroundColor: '#281949',
+    backgroundColor: '#141414',
    
     width: '100%',
     // borderWidth:2,

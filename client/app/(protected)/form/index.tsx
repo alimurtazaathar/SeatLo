@@ -63,7 +63,7 @@ const Form=()=>{
             label: 'Female',
           }
         ]}
-        style={{width:40,alignContent:'center',borderColor:'##8454F5'}}
+        style={{width:40,alignContent:'center',borderColor:'#8454F5'}}
         /> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
