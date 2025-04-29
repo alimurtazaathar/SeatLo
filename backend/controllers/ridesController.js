@@ -5,7 +5,15 @@ const { Ride, RideStop, User, Car, RideRequest, Rating } = require('../models');
 // Create a ride
 exports.createRide = async (req, res) => {
   try {
-    const { driver_id, car_id, start_time, date, total_seats, stops } = req.body;
+    const { userId } = req.params;
+    const { car_id, start_time, date, total_seats, stops } = req.body;
+
+    const driver_id = parseInt(userId, 10);
+    if (isNaN(driver_id)) {
+      return res.status(400).json({ error: "Invalid driver ID" });
+    }
+
+    console.log({ driver_id, car_id, start_time, date, total_seats });
 
     const ride = await Ride.create({
       driver_id,
@@ -13,10 +21,9 @@ exports.createRide = async (req, res) => {
       start_time,
       date,
       total_seats,
-      available_seats: total_seats,
+      available_seats: total_seats
     });
 
-    // Save stops if provided
     if (Array.isArray(stops)) {
       const stopData = stops.map((stop, index) => ({
         ride_id: ride.id,
@@ -28,9 +35,12 @@ exports.createRide = async (req, res) => {
 
     res.status(201).json({ message: 'Ride created successfully', ride });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message || 'Server Error' });
   }
 };
+
+
 
 // controllers/ridesController.js
 
