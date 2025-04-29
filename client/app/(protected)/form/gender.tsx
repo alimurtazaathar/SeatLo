@@ -4,6 +4,7 @@ import {
   Pressable,
   StyleSheet,
   Modal,
+  TextInput,
 } from 'react-native';
 import { useEffect, useState } from 'react';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -20,38 +21,99 @@ const Gender = () => {
   const [gender, setGender] = useState<'Male' | 'Female'>('Male');
   const [hasCar, setHasCar] = useState<'Yes' | 'No'>('No');
   const [modalVisible, setModalVisible] = useState(false);
-  const router=useRouter();
+  const [carMake, setCarMake] = useState('');
+  const [carModel, setCarModel] = useState('');
+  const [carVariant, setCarVariant] = useState('');
+  const [licensePlate, setLicensePlate] = useState('');
+  const router = useRouter();
+  
   useEffect(() => {
     setModalVisible(hasCar === 'Yes');
   }, [hasCar]);
 
+  const handleDone = () => {
+    setModalVisible(false);
+    // Here you could save the car details if needed
+  };
+
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.screen}>
+      <SafeAreaView style={[styles.screen,{
+    backgroundColor:modalVisible?'#4f3293':'#8454F5',
+
+      }]}>
       <Pressable style={{backgroundColor:'#141414',width:'15%',padding:10,borderRadius:5,position:'absolute',top:80,left:20}} onPress={()=>{router.back()}}><Ionicons name="arrow-back-outline" style={{color:'#ffff',fontSize:25,textAlign:'center'}}></Ionicons></Pressable>
 
         <Modal
           transparent
           visible={modalVisible}
-          animationType="fade"
+          animationType="slide"
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.backdrop}>
             <View style={styles.modalCard}>
               <Text style={styles.modalHeading}>Enter Ride Details</Text>
+              
+              {/* Car details form */}
+              <View style={styles.formContainer}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Car Make</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="e.g. Toyota"
+                    placeholderTextColor="#666"
+                    value={carMake}
+                    onChangeText={setCarMake}
+                  />
+                </View>
+                
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Car Model</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="e.g. Corolla"
+                    placeholderTextColor="#666"
+                    value={carModel}
+                    onChangeText={setCarModel}
+                  />
+                </View>
+                
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Variant</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="e.g. XLI"
+                    placeholderTextColor="#666"
+                    value={carVariant}
+                    onChangeText={setCarVariant}
+                  />
+                </View>
+                
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>License Plate Number</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="e.g. ABC123"
+                    placeholderTextColor="#666"
+                    value={licensePlate}
+                    onChangeText={setLicensePlate}
+                    autoCapitalize="characters"
+                  />
+                </View>
+              </View>
              
-              <View style={{display:'flex',flexDirection:'row',alignItems:'center',gap:30}}>
+              <View style={styles.btnContainer}>
                 <Pressable
-                  style={[styles.modalBtn,{backgroundColor: '#8454F5'}]}
-                  onPress={() => setModalVisible(false)}
+                  style={[styles.modalBtn, {backgroundColor: '#141414'}]}
+                  onPress={handleDone}
                 >
                   <Text style={styles.modalBtnText}>Done</Text>
                 </Pressable>
                 <Pressable
-                  style={[styles.modalBtn,{backgroundColor: '#808080',opacity:0.6}]}
+                  style={[styles.modalBtn, {backgroundColor: '#fff', opacity:0.6}]}
                   onPress={() => setModalVisible(false)}
                 >
-                  <Text style={styles.modalBtnText}>Skip</Text>
+                  <Text style={{color:'#141414',fontWeight:'bold'}}>Skip</Text>
                 </Pressable>
               </View>
               
@@ -107,7 +169,6 @@ const Gender = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#8454F5',
     padding: 30,
     justifyContent: 'space-evenly',
   },
@@ -129,26 +190,69 @@ const styles = StyleSheet.create({
 
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    // backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalCard: {
-    width: '80%',
+    width: '85%',
     padding: 24,
-    backgroundColor: '#141414',
+    backgroundColor: '#8454F5',
     borderRadius: 12,
+    // borderColor:'#fff',
+    // borderWidth:2,
     alignItems: 'center',
+    // shadowColor:'#141414',
   },
-  modalHeading: { fontSize: 18, fontWeight: '600', marginBottom: 6,color:'#fff' },
-  modalText: { fontSize: 15, textAlign: 'center', marginBottom: 18 },
-  modalBtn: {
-    // backgroundColor: '#8454F5',
+  modalHeading: { 
+    fontSize: 20, 
+    fontWeight: '600', 
+    marginBottom: 20,
+    color: '#fff' 
+  },
+  formContainer: {
+    width: '100%',
+    marginBottom: 24,
+  },
+  inputGroup: {
+    marginBottom: 16,
+    width: '100%',
+  },
+  inputLabel: {
+    color: '#fff',
+    marginBottom: 6,
+    fontSize: 14,
+  },
+  input: {
+    backgroundColor: '#fff',
     borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 24,
+    padding: 12,
+    color: '#fff',
+    width: '100%',
+    borderWidth: 2,
+    borderColor: '#141414',
   },
-  modalBtnText: { color: '#FFF', fontWeight: '600' },
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 30,
+    width: '100%',
+    
+  },
+  modalBtn: {
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    minWidth: 100,
+    alignItems: 'center',
+    backgroundColor:'#141414'
+
+  },
+  modalBtnText: { 
+    color: '#FFF', 
+    fontWeight: '600',
+    fontSize: 16,
+  },
 });
 
 export default Gender;

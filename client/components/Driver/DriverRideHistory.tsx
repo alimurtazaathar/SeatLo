@@ -7,27 +7,26 @@ import { useRouter } from 'expo-router';
 // Driver-specific interface
 interface DriverRideDetails {
   id: number;
-  destination: string;
-  departureTime: string;
-  availableSeats: number;
-  route?: string;
-  vehicleDetails?: string;
+  name: string;
+  time: {hours:number,minutes:number}|{};
+  seats: number;
+  stops: string[];
   passengers?: { name: string; pickup: string }[];
 }
 
 interface Props {
-  ride: DriverRideDetails | null;
+  ride: DriverRideDetails ;
 }
 
-const DriverRideHistory = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
+const DriverRideHistory = forwardRef<BottomSheet, Props>((props, ref) => {
   const snapPoints = useMemo(() => ['90%'], []);
   const router = useRouter();
 
   const handleSheetChanges = useCallback((index: number) => {
     // console.log('DriverBottomSheet index changed:', index);
   }, []);
-  
-  if (!ride) return null;
+  // console.log('ride is',props.ride)
+  if (!props.ride) return null;
 
   return (
     <BottomSheet
@@ -41,28 +40,28 @@ const DriverRideHistory = forwardRef<BottomSheet, Props>(({ ride }, ref) => {
     >
       <BottomSheetView style={styles.contentContainer}>
         {/* Destination */}
-        <Text style={styles.titleText}>{ride.destination}</Text>
+        <Text style={styles.titleText}>Fast Nuces</Text>
 
         {/* Ride Details */}
         <View style={styles.detailsSection}>
-          <Text style={styles.infoText}>Departure Time: {ride.departureTime}</Text>
-          <Text style={styles.infoText}>Available Seats: {ride.availableSeats}</Text>
+          <Text style={styles.infoText}>Departure Time: {props.ride?.time.hours}:{props.ride?.time.minutes}</Text>
+          <Text style={styles.infoText}>Available Seats: {props.ride?.seats}</Text>
 
           {/* Route Information */}
-          {ride.route && (
-            <Text style={styles.infoText}>Route: {ride.route}</Text>
-          )}
+          
+            <Text style={styles.infoText}>Route: {props.ride?.stops.join('->')}</Text>
+          
 
-          {/* Vehicle Details */}
-          {ride.vehicleDetails && (
+         {/* Fetch vehicle details(api related work) */}
+          {/* {ride.vehicleDetails && (
             <Text style={styles.infoText}>Vehicle: {ride.vehicleDetails}</Text>
-          )}
+          )} */}
 
           {/* Passengers */}
-          {ride.passengers && ride.passengers.length > 0 && (
+          {props.ride?.passengers && props.ride?.passengers.length > 0 && (
             <View style={styles.passengersSection}>
               <Text style={styles.sectionTitle}>Passengers:</Text>
-              {ride.passengers.map((passenger, index) => (<View key={index}> 
+              {props.ride.passengers.map((passenger, index) => (<View key={index}> 
                 <Text  style={styles.passengerText}>
                   {passenger.name} - Pickup: {passenger.pickup}
                 </Text>
