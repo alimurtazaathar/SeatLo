@@ -5,10 +5,12 @@ const router = express.Router();
 const ridesController = require('../controllers/ridesController');
 
 // Create a new ride
-router.post('/create', ridesController.createRide);
+//router.post('/create', ridesController.createRide);
+router.post('/create/:userId', ridesController.createRide);
+
 
 // Get all available rides
-router.get('/all', ridesController.getAllRides);
+router.get('/all/:userId', ridesController.getAllRides);
 
 // Get specific ride details
 router.get('/:rideId', ridesController.getRideDetails);
