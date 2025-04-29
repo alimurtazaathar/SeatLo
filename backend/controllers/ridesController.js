@@ -32,52 +32,62 @@ exports.createRide = async (req, res) => {
   }
 };
 
+// controllers/ridesController.js
+
 exports.getAllRides = async (req, res) => {
   try {
-    const userId = req.query.userId; // Assuming userId is passed as a query parameter
+    const userId = req.params.userId; // userId from route parameter
 
     const rides = await Ride.findAll({
       where: { status: 'active' },
       include: [
-        { model: User, 
-          attributes: ['name'] },
-        { model: RideStop, 
-          attributes: ['stop_name', 'stop_order'] },
-        { model: Car, 
-          attributes: ['model', 'color', 'license_plate'] },
         {
-          model: RideRequest, // Include the RideRequest to check if the user has requested this ride
+          model: User,
+          attributes: ['name'],
+        },
+        {
+          model: RideStop,
+          attributes: ['stop_name', 'stop_order'],
+        },
+        {
+          model: Car,
+          attributes: ['model', 'color', 'license_plate'],
+        },
+        {
+          model: RideRequest,
           where: { passenger_id: userId },
-          required: false, // Makes the join optional (if no request exists for this ride)
-          attributes: ['status'] // Get the status of the user's request
-        }
+          required: false, // Allow rides without a request from this user
+          attributes: ['status'],
+        },
       ],
-      attributes: ['start_time', 'date', 'total_seats', 'available_seats']
+      attributes: ['id', 'start_time', 'date', 'total_seats', 'available_seats'],
     });
 
-    // Transform the data
-    const cleanRides = rides.map(ride => {
-      const requestStatus = ride.RideRequests?.[0]?.status || null; // If no request, default to null
+    const formattedRides = rides.map(ride => {
+      const requestStatus = ride.RideRequests?.[0]?.status || null;
 
       return {
-        driver: ride.User?.name, // Accessing driver using the default alias 'User'
-        car: ride.Car, // Accessing car using the default alias 'Car'
+        id: ride.id,
+        driver: ride.User?.name || 'Unknown',
+        car: ride.Car || null,
         start_time: ride.start_time,
         date: ride.date,
         total_seats: ride.total_seats,
         available_seats: ride.available_seats,
-        stops: ride.RideStops
+        stops: (ride.RideStops || [])
           .sort((a, b) => a.stop_order - b.stop_order)
-          .map(stop => stop.stop_name), // Accessing stops using the default alias 'RideStops'
-        request_status: requestStatus // Add the request status to the response
+          .map(stop => stop.stop_name),
+        request_status: requestStatus,
       };
     });
 
-    res.status(200).json(cleanRides); // Return the transformed ride data
+    res.status(200).json(formattedRides);
   } catch (error) {
+    console.error('Error in getAllRides:', error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Controller function to get ride details
 exports.getRideDetails = async (req, res) => {

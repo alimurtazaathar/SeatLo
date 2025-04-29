@@ -8,7 +8,7 @@ const ridesController = require('../controllers/ridesController');
 router.post('/create', ridesController.createRide);
 
 // Get all available rides
-router.get('/all', ridesController.getAllRides);
+router.get('/all/:userId', ridesController.getAllRides);
 
 // Get specific ride details
 router.get('/:rideId', ridesController.getRideDetails);
