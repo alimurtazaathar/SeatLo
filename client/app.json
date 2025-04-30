@@ -1,4 +1,3 @@
-
 {
   "expo": {
     "name": "client",
@@ -15,7 +14,6 @@
         "usesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.SeatLo.SeatLo"
-    
     },
     "android": {
       "adaptiveIcon": {
@@ -41,15 +39,14 @@
         }
       ],
       "expo-secure-store",
-      ["@react-native-google-signin/google-signin",
+      [
+        "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme":"com.googleusercontent.apps.840323221565-v7qsgap29k6fi6inad67mujf5jq3rasc"
-        }      
-      ]
-      
-
+          "iosUrlScheme": "com.googleusercontent.apps.840323221565-v7qsgap29k6fi6inad67mujf5jq3rasc"
+        }
+      ],
+      "expo-localization"
     ],
-    
     "experiments": {
       "typedRoutes": true
     },
@@ -60,9 +57,7 @@
       "eas": {
         "projectId": "3c317f86-9091-4051-b8a6-f66781753cc5"
       }
-  
     },
-    
     "owner": "alimurtazaathar"
   }
 }

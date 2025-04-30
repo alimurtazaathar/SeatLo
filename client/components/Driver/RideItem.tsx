@@ -5,7 +5,10 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 interface RideProps {
   id: number;
   name: string;
-  location: string;
+  seats:number;
+  stops:string[],
+  date:Date,
+  time:{hours:number,minutes:number},
   onPress: () => void;
   onReuse?:()=>void;
 }
@@ -19,9 +22,9 @@ function truncateText(text:string, maxLength:number) {
   return (lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated) + "...";
 }
 
-const RideItems: React.FC<RideProps> = ({ id, name, location, onPress, History,onReuse}) => {
-  console.log("Ride ID:", id);
-  
+const RideItems: React.FC<RideProps> = ({ id, name, seats,stops,date,time, onPress,onReuse}) => {
+  // console.log("Ride ID:", id);
+  // console.log(stops)
 
 
 
@@ -29,7 +32,7 @@ const RideItems: React.FC<RideProps> = ({ id, name, location, onPress, History,o
     <View style={styles.rideItemContainer}>
         {/* <View style={styles.header}> */}
           <Pressable style={{padding:20,flex:1}} onPress={onPress}>
-            <Text style={styles.rideText} numberOfLines={1} ellipsizeMode="tail">{!History && name } {location}</Text>
+            <Text style={styles.rideText} numberOfLines={1} ellipsizeMode="tail">{stops.join(" -> ")} ...</Text>
             <View style={{display:'flex',flexDirection:'row'}}>
               <Text style={styles.infoText}>View details</Text>
               <Ionicons name="chevron-forward-outline" color={"gray"}/>
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
   },
 
   rideText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
     color: "black",
   },

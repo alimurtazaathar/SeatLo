@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useMemo, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -16,92 +16,112 @@ import BottomSheet, {
   BottomSheetBackdrop
 } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
-import { TimePickerModal,DatePickerModal } from 'react-native-paper-dates';
+import { TimePickerModal } from 'react-native-paper-dates';
 import SearchBox from "../SearchBox";
 import { PaperProvider } from "react-native-paper";
 import SearchStops from "../SearchStops";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { DateSelect } from "../DateSelect";
+import RoadConnector from "./RoadConnecto";
+
+import Svg, { Path } from 'react-native-svg';
 interface RideDetails {
   id: number;
   name: string;
-  location: string;
-  History?: true;
-  onPress: () => void;
-
+  seats:number;
+  stops:string[],
+  date:Date,
+  time:{hours:number,minutes:number},
 }
 
 
 interface FormData {
   carName: string;
   licenseNumber: string;
-  seats: string;
-  time:{hours:string,minutes:string}
+  seats: number;
 }
 
+
 interface AddRideProps {
-  onSubmit: (data: FormData & { stops: string[] }) => void;
-  ride?:RideDetails|null
-  isRepool?:boolean
+  onSubmit: (data: FormData & { 
+    stops: string[]; 
+    date: Date; 
+    time: { hours: number; minutes: number };
+  }) => void;
+  ride:RideDetails|null;
 }
 
 const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
+  
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors },reset
   } = useForm<FormData>({
     defaultValues: {
       carName: "Toyota Prius",
       licenseNumber: "ABC69",
-      seats: "",
+      seats: props.ride?.seats ?? 0,
     },
   });
 
   const snapPoints = useMemo(() => ["90%"], []);
-  const handleSheetChanges = useCallback((index: number) => {}, []);
-
-  const [stops, setStops] = useState<string[]>([]);
+  const handleSheetChanges = useCallback((index: number) => { }, []);
+  const currentDate = new Date();
+  const [stops, setStops] = useState<string[]>(
+    props.ride?.stops?.filter((stop): stop is string => stop !== null) || []
+  );
   const [stopInput, setStopInput] = useState("");
   const [isReveresed, setIsReversed] = useState(false);
-  const [isClockVisible,setIsClockVisible]=useState(false);
+  const [isClockVisible, setIsClockVisible] = useState(false);
   const [date, setDate] = useState(new Date());
-const [isDateVisible, setIsDateVisible] = useState(false);
-  const [hours,setHours]=useState(0);
-  const [minutes,setMinutes]=useState(0);
-  const searchRef=useRef<BottomSheet>(null);
-  const searchStop=()=>{
+  const [hours, setHours] = useState(props.ride?.time.hours || currentDate.getHours());
+  const [minutes, setMinutes] = useState(props.ride?.time.minutes || currentDate.getMinutes());
+  const searchRef = useRef<BottomSheet>(null);
+  const [isDateVisible, setIsDateVisible] = useState(false);
+  const [departureDate, setDepartureDate] = useState<Date>(props.ride?.date || new Date());
+  
+  useEffect(() => {
+    if (props.ride) {
+      reset({
+        carName: "Toyota Prius",
+        licenseNumber: "ABC69",
+        seats: props.ride.seats ?? 0,
+      });
+  
+      setStops(props.ride.stops?.filter((stop): stop is string => stop !== null) || []);
+      setHours(props.ride.time.hours || 0);
+      setMinutes(props.ride.time.minutes || 0);
+      setDepartureDate(props.ride.date || new Date());
+      setDate(props.ride.date || new Date());
+    }
+  }, [props.ride, reset]);
+  
+  const searchStop = () => {
     searchRef.current?.expand();
   }
-  const closeSearchStop=()=>{
+  
+  const closeSearchStop = () => {
     searchRef.current?.close();
-
   }
-  const onDateDismiss=React.useCallback(()=>{
-    setIsDateVisible(false)
-  },[setIsDateVisible])
 
   const onConfirmDate = useCallback(
-    (params: { date :any}) => {
+    (date: Date) => {
+      setDepartureDate(date);
       setIsDateVisible(false);
-      setDate(params.date);
     },
-    [setIsDateVisible]
+    []
   );
 
-
-  
-  const onDismiss=React.useCallback(()=>{
-    setIsClockVisible(false)
-  },[setIsClockVisible])
-
   const onConfirm = React.useCallback(
-    ({ hours, minutes }:{ hours: number; minutes: number }) => {
+    ({ hours, minutes }: { hours: number; minutes: number }) => {
       setIsClockVisible(false);
       setHours(hours);
       setMinutes(minutes);
-      console.log({ hours, minutes });
     },
-    [setIsClockVisible]
+    []
   );
 
   const invertStops = () => {
@@ -112,275 +132,261 @@ const [isDateVisible, setIsDateVisible] = useState(false);
   const addStop = () => {
     setStopInput("");
     if (stopInput.trim()) {
-      setStops((prev) => [...prev, stopInput.trim() ]);
+      setStops((prev) => [...prev, stopInput.trim()]);
     }
   };
+  
   const removeStop = (indexToRemove: number) => {
     setStops((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
+  
   const formatTime = (h: number, m: number) => {
     const suffix = h >= 12 ? "PM" : "AM";
     const formattedHour = h % 12 === 0 ? 12 : h % 12;
     return `${String(formattedHour).padStart(2, "0")}:${String(m).padStart(2, "0")} ${suffix}`;
   };
+  
   const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = { weekday: 'short', month: 'short', day: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
   };
-  
+
   const destination = (
-    <View style={[styles.stopItem, { width: "100%" ,alignContent:'center'}]}>
-      <Text style={{ color: "#ffff",height:20,textAlignVertical:'center' }}>Fast NUCES</Text>
+    <View style={[styles.stopItem, { width: "90%", alignContent: 'center' }]}>
+      <Text style={{ color: "#f8ce59", fontWeight:'bold',fontSize:15, height: 20, textAlignVertical: 'center' ,letterSpacing:4}}>------ Fast NUCES ----</Text>
     </View>
   );
 
   const stopInputField = (
+    
     <Pressable
-    onPress={searchStop}
-    style={[
-      styles.addButton,
-      {
-        backgroundColor: "#222",
-        width: "100%",
-        alignItems: "center",
-        marginVertical: 5,
-        borderRadius: 10,
-        padding: 10,
-      },
-    ]}
-  >
-    <Ionicons
-      name="add-outline"
-      size={15}
-      style={{
-        color: "white",
-        backgroundColor: "#8b5cf6",
-        borderRadius: 15,
-        padding: 5,
-      }}
-    />
-  </Pressable>
-  );  
+      onPress={searchStop}
+      style={[
+        styles.addButton,
+        {
+          backgroundColor: "#222",
+          width: "90%",
+          alignItems: "center",
+          marginVertical: 5,
+          borderRadius: 10,
+          padding: 10,
+        },
+      ]}
+    >
+      <Ionicons
+        name="add-outline"
+        size={15}
+        style={{
+          color: "white",
+          backgroundColor: "#8b5cf6",
+          borderRadius: 15,
+          padding: 5,
+        }}
+      />
+    </Pressable>
+  );
+  
   const renderBackdrop = useCallback(
-		(props:any) => (
-			<BottomSheetBackdrop
-				{...props}
-				disappearsOnIndex={0}
-				appearsOnIndex={1}
-        style={{backgroundColor:'#281949'}}
-			/>
-		),
-		[]
-	);
-
-
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={0}
+        appearsOnIndex={1}
+        style={{ backgroundColor: '#281949' }}
+      />
+    ),
+    []
+  );
 
   return (
     <>
-    <BottomSheet
-      ref={ref}
-      index={-1}
-      snapPoints={snapPoints}
-      onChange={handleSheetChanges}
-      enablePanDownToClose={true}
-      backgroundStyle={{ backgroundColor: "#8454F5"
-        // 422a7b
+      <BottomSheet
+        ref={ref}
+        index={-1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        enablePanDownToClose={true}
+        backgroundStyle={{
+          backgroundColor: "#8454F5"
+        }}
+        handleIndicatorStyle={{ backgroundColor: "#141414" }}
+        style={{width:'100%'}}
+      >
+        <BottomSheetView style={styles.scrollContainer}>
+          <FlatList
+            data={stops}
+            renderItem={({ item, index }) => (
+              <View style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
+                <View style={styles.connectorContainer}>
+                  <RoadConnector height={50} />
+                </View>
+                <View style={styles.stopItem}>
+                  <Text style={styles.stopText}>{item}</Text>
+                  <TouchableOpacity onPress={() => removeStop(index)}>
+                    <Ionicons name="trash" size={20} color="red" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+            keyExtractor={(_, index) => index.toString()}
+            ListHeaderComponent={
+              <>
+                <Text style={styles.header}>Ride Details</Text>
 
-       }}
-      //  detached={true}
-      //  bottomInset={50}
-      handleIndicatorStyle={{ backgroundColor: "#141414" }}
-      // style={{borderColor:'#141414',borderWidth:2,borderRadius:18}}
-    >
-      <BottomSheetView style={styles.scrollContainer}>
-        <FlatList
-          data={stops}
-          renderItem={({ item, index }) => (
-            <View style={styles.stopItem}>
-              <Text style={styles.stopText}>{item}</Text>
-              <TouchableOpacity onPress={() => removeStop(index)}>
-                <Ionicons name="trash" size={20} color="red" />
-              </TouchableOpacity>
-            </View>
-          )}
-          keyExtractor={(_, index) => index.toString()}
-          ListHeaderComponent={
-            <>
-              <Text style={styles.header}>Enter Ride Details</Text>
-
-               <TextInputLabel label="Departure time"/>
-               <Pressable onPress={()=>{setIsClockVisible(true)}} style={{display:'flex',flexDirection:'row',alignItems:'center',gap:4}}>
-
-               <View style={styles.timeCard}><Text style={{textAlign:'center'}}>{formatTime(hours,minutes)} </Text><MaterialCommunityIcons name="clock-edit" size={20} color="black" /></View>
-
-               </Pressable>
-               <TimePickerModal
-          visible={isClockVisible}
-          onDismiss={onDismiss}
-          onConfirm={onConfirm}
-          hours={12}
-          minutes={14}
-        
-        />
-               <TextInputLabel label="Departure Date"/>
-               <Pressable onPress={()=>{setIsDateVisible(true)}} style={{display:'flex',flexDirection:'row',alignItems:'center',gap:4}}>
-
-               <View style={styles.timeCard}><Text style={{textAlign:'center'}}>{formatTime(hours,minutes)} </Text><MaterialCommunityIcons name="clock-edit" size={20} color="black" /></View>
-
-               </Pressable>
-               <DatePickerModal
-               mode="single"
-               locale="en"
-          visible={isDateVisible}
-          onDismiss={onDateDismiss}
-          onConfirm={onConfirmDate}
-          date={date}
-        
-        />
-
-              <TextInputLabel label="Number of Seats" />
-              <Controller
-                control={control}
-                name="seats"
-                rules={{ required: "Number of seats is required" }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter number of seats"
-                    value={value}
-                    onChangeText={onChange}
-                    placeholderTextColor={"gray"}
-                    keyboardType="numeric"
-
-                  />
-                )}
-              />
-              {errors.seats && (
-                <Text style={styles.error}>{errors.seats.message}</Text>
-              )}
-
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-  
-                }}
-              >
-                <TextInputLabel label="Stops" />
                 <Pressable
-                  style={{
-                    padding: 5,
-                    borderRadius: 10,
-                    backgroundColor: "#141414",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginTop:10
-                  }}
-                  onPress={invertStops}
-                >
-                  <Ionicons
-                    name="swap-vertical-outline"
-                    color={"white"}
-                    size={15}
-                  />
-                  <Text
-                    style={{
-                      color: "white",
-                      padding: 2,
-                      borderRadius: 10,
-                    }}
+  style={styles.timeContainer}
+  onPress={() => setIsClockVisible(true)}
+>
+  <View style={styles.timeWrapper}>
+    <Text style={styles.timeText}>
+      {formatTime(hours, minutes)}
+    </Text>
+    <MaterialCommunityIcons name="pencil-circle" size={28} color="#f8ce59" />
+  </View>
+</Pressable>
+
+<Pressable
+  style={styles.dateContainer}
+  onPress={() => setIsDateVisible(true)}
+>
+  <View style={styles.timeWrapper}>
+    <Text style={styles.dateText}>
+      {formatDate(departureDate)}
+    </Text>
+    <MaterialCommunityIcons name="pencil-circle" size={28} color="#f8ce59" />
+  </View>
+</Pressable>
+
+                <TimePickerModal
+                  visible={isClockVisible}
+                  onDismiss={() => setIsClockVisible(false)}
+                  onConfirm={onConfirm}
+                  hours={hours}
+                  minutes={minutes}
+                />
+                
+                <DateSelect
+                  visible={isDateVisible}
+                  onDismiss={() => setIsDateVisible(false)}
+                  onDateChange={onConfirmDate}
+                  date={departureDate}
+                />
+
+                <TextInputLabel label="Number of Seats" />
+                <Controller
+                  control={control}
+                  name="seats"
+                  rules={{ required: "Number of seats is required" }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Enter number of seats"
+                      value={value !== 0 ? String(value) : ''}
+                      onChangeText={onChange}
+                      placeholderTextColor={"gray"}
+                      keyboardType="numeric"
+                    />
+                  )}
+                />
+                {errors.seats && (
+                  <Text style={styles.error}>{errors.seats.message}</Text>
+                )}
+
+                <View style={styles.stopsHeaderContainer}>
+                  <TextInputLabel label="Stops" />
+                  <Pressable
+                    style={styles.invertButton}
+                    onPress={invertStops}
                   >
-                    Invert
-                  </Text>
-                </Pressable>
-              </View>
+                    <Ionicons
+                      name="swap-vertical-outline"
+                      color={"white"}
+                      size={15}
+                    />
+                    <Text style={styles.invertButtonText}>
+                      Invert
+                    </Text>
+                  </Pressable>
+                </View>
 
-              {isReveresed && destination}
-            </>
-          }
-          ListFooterComponent={
-            <>
-              {/* Stops Input */}
-              {/* <View
-                style={[styles.stopsContainer, { flexDirection: "column" }]}
-              > */}
+                {isReveresed && destination}
+              </>
+            }
+            ListFooterComponent={
+              <>
                 {!isReveresed && stopInputField}
-
-                {/* */}
-                    {/* <SearchBox/> */}
                 {!isReveresed ? destination : stopInputField}
-              {/* </View> */}
 
-              {/* Car Name and License Number */}
-              <View style={styles.carInfoContainer}>
-                <TextInputLabel label="Car Name" />
-                <Controller
-                  control={control}
-                  name="carName"
-                  rules={{ required: "Car name is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <BottomSheetTextInput
-                      style={styles.colInput}
-                      placeholder="Enter car name"
-                      placeholderTextColor={"gray"}
-                      value={value}
-                      onChangeText={onChange}
-                    />
+                {/* Car Name and License Number */}
+                <View style={styles.carInfoContainer}>
+                  <TextInputLabel label="Car Name" />
+                  <Controller
+                    control={control}
+                    name="carName"
+                    rules={{ required: "Car name is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <BottomSheetTextInput
+                        style={styles.colInput}
+                        placeholder="Enter car name"
+                        placeholderTextColor={"gray"}
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                    )}
+                  />
+                  {errors.carName && (
+                    <Text style={styles.error}>{errors.carName.message}</Text>
                   )}
-                />
-                {errors.carName && (
-                  <Text style={styles.error}>{errors.carName.message}</Text>
-                )}
 
-                <TextInputLabel label="License Number" />
-                <Controller
-                  control={control}
-                  name="licenseNumber"
-                  rules={{ required: "License number is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <BottomSheetTextInput
-                      style={[styles.colInput]}
-                      placeholder="Enter license number"
-                      value={value}
-                      placeholderTextColor={"gray"}
-                      onChangeText={onChange}
-                      selectionColor={"#222"}
-                    />
+                  <TextInputLabel label="License Number" />
+                  <Controller
+                    control={control}
+                    name="licenseNumber"
+                    rules={{ required: "License number is required" }}
+                    render={({ field: { onChange, value } }) => (
+                      <BottomSheetTextInput
+                        style={styles.colInput}
+                        placeholder="Enter license number"
+                        value={value}
+                        placeholderTextColor={"gray"}
+                        onChangeText={onChange}
+                        selectionColor={"#222"}
+                      />
+                    )}
+                  />
+                  {errors.licenseNumber && (
+                    <Text style={styles.error}>
+                      {errors.licenseNumber.message}
+                    </Text>
                   )}
-                />
-                {errors.licenseNumber && (
-                  <Text style={styles.error}>
-                    {errors.licenseNumber.message}
-                  </Text>
-                )}
-              </View>
+                </View>
 
-              {/* Submit Button */}
-              <Pressable
-                onPress={handleSubmit((data) => {
-                  if (stops.length === 0) {
-                    alert("Please input a stop");
-                  } else {
-                    props.onSubmit({ ...data, stops });
-                  }
-                })}
-                style={styles.submitButton}
-              >
-                <Text style={styles.submitText}>Submit</Text>
-              </Pressable>
-            </>
-          }
-        />
-      </BottomSheetView>
-
-    </BottomSheet>
-    <SearchStops ref={searchRef} closeSheet={closeSearchStop} stops={stops} setStops={setStops}/>
-
-  </>  
-);
+                <Pressable
+                  onPress={handleSubmit((data) => {
+                    if (stops.length === 0) {
+                      alert("Please input a stop")
+                    }//deal with edge cases where time is appropriate
+                    else {
+                      props.onSubmit({ 
+                        ...data, 
+                        stops, 
+                        date: departureDate, 
+                        time: { hours, minutes }
+                      });
+                    }
+                  })}
+                  style={styles.submitButton}
+                >
+                  <Text style={styles.submitText}>Submit</Text>
+                </Pressable>
+              </>
+            }
+          />
+        </BottomSheetView>
+      </BottomSheet>
+      <SearchStops ref={searchRef} closeSheet={closeSearchStop} stops={stops} setStops={setStops} />
+    </>
+  );
 });
 
 const TextInputLabel = ({ label }: { label: string }) => (
@@ -389,17 +395,51 @@ const TextInputLabel = ({ label }: { label: string }) => (
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    padding: 15,
+    padding: 20,
     gap: 15,
-    flex:1,
-   
   },
   header: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 20,
     textAlign: "center",
+    marginBottom: 15,
+  },
+  // New time styles
+  timeContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 5,
+  },
+  timeWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  timeText: {
+    fontSize: 50,
+    fontWeight: '900',
+    color: "#fff",
+    textAlign: "center",
+    letterSpacing: 2,
+  },
+  dateContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 25,
+  },
+  dateText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: "#fff",
+    textAlign: "center",
+  },
+  editIcon: {
+    position: 'absolute',
+    right: -30,
+    top: '50%',
+    marginTop: -14, 
   },
   label: {
     color: "white",
@@ -415,29 +455,46 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 10,
-borderWidth:2,borderColor:'black',
-
+    borderWidth: 2,
+    borderColor: 'black',
   },
   colInput: {
     width: "100%",
-    // backgroundColor: "#444", 
-    backgroundColor: "#fff", 
-    
+    backgroundColor: "#fff",
     color: "black",
     padding: 10,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "#141414",
-    fontStyle: "italic", 
+    fontStyle: "italic",
   },
-  
+  connectorContainer: {
+    height: 40,
+    marginRight: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   error: {
     color: "red",
     fontSize: 12,
   },
-  stopsContainer: {
+  stopsHeaderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  invertButton: {
+    padding: 5,
+    borderRadius: 10,
+    backgroundColor: "#141414",
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 10,
+  },
+  invertButtonText: {
+    color: "white",
+    padding: 2,
+    borderRadius: 10,
   },
   addButton: {
     marginLeft: 0,
@@ -445,18 +502,24 @@ borderWidth:2,borderColor:'black',
   stopItem: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#333",
+    backgroundColor: "#2c2c2c",
+    alignItems: 'center',
     padding: 10,
     borderRadius: 8,
     marginVertical: 5,
+    width:'90%'
   },
   stopText: {
-    color: "white",
+    color: "#f8ce59",
+    fontWeight: 'bold',
+    fontSize: 15,
+    textAlign: 'center',
+    letterSpacing:4,
   },
   submitButton: {
     backgroundColor: "#141414",
     padding: 10,
-    paddingVertical:15,
+    paddingVertical: 15,
     borderRadius: 10,
     marginTop: 20,
   },
@@ -468,7 +531,6 @@ borderWidth:2,borderColor:'black',
     flexDirection: "column",
     marginTop: 20,
   },
-  timeCard:{backgroundColor:'#fff',borderColor:'#141414',borderWidth:2,borderRadius:10,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:4,padding:10}
 });
 
 export default AddRide;
