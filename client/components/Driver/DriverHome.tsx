@@ -37,24 +37,24 @@ const driverRides = [
     date: new Date("2025-05-04T18:45:00Z"),
     time: { hours: 18, minutes: 45 },
   },
-  {
-    id: 4,
-    name:'Umer Nadeem',
+  // {
+  //   id: 4,
+  //   name:'Umer Nadeem',
 
-    seats: 5,
-    stops: ["Gizri", "Clifton Block 7", "Boat Basin", "Do Darya"],
-    date: new Date("2025-05-05T07:15:00Z"),
-    time: { hours: 7, minutes: 15 },
-  },
-  {
-    id: 5,
-    name:'Umer Nadeem',
+  //   seats: 5,
+  //   stops: ["Gizri", "Clifton Block 7", "Boat Basin", "Do Darya"],
+  //   date: new Date("2025-05-05T07:15:00Z"),
+  //   time: { hours: 7, minutes: 15 },
+  // },
+  // {
+  //   id: 5,
+  //   name:'Umer Nadeem',
 
-    seats: 1,
-    stops: ["Malir Halt", "Shah Faisal Colony", "Natha Khan", "Drigh Road"],
-    date: new Date("2025-05-06T22:00:00Z"),
-    time: { hours: 22, minutes: 0 },
-  },
+  //   seats: 1,
+  //   stops: ["Malir Halt", "Shah Faisal Colony", "Natha Khan", "Drigh Road"],
+  //   date: new Date("2025-05-06T22:00:00Z"),
+  //   time: { hours: 22, minutes: 0 },
+  // },
 ];
 
 type RideDetails= {
@@ -95,14 +95,35 @@ const DriverHome = () => {
    addRideSheetRef.current?.expand();
    
   };
-  const handleFormSubmit = (data: any) => {
-    console.log('Submitted form data:', data);
-  };
+  const handleFormSubmit = async (data: any) => {
+    try {
+      const response = await fetch('http://localhost:8000/api/rides/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+  
+      const result = await response.json();
+      addRideSheetRef.current?.close();
 
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
+  
   return (
       <View style={styles.container}>
         {/* <View><Text style={{color:'white',textAlign:'center',borderWidth:2,borderColor:'white'}}>Some stats here</Text></View> */}
         <Pressable style={{padding:15,borderRadius:10,backgroundColor:'#F7C846',marginBottom:15}} onPress={()=>{addRide(defaultRide)}}><Text style={{color:'black',textAlign:'center'}}>+ Add a ride</Text></Pressable>
+        <View style={{borderColor:'#fff',borderWidth:2}}>
+          <Text style={{color:'#fff'}}>Active Ride Container here</Text>
+        </View>
         <Text style={styles.headerText}>History</Text>
         {driverRides.map((ride) => (
           <RideItems

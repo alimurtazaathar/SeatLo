@@ -43,10 +43,13 @@ export default function SignIn() {
         if(isSuccessResponse(response)){
           const {idToken,user}=response.data;
           const {email,name,photo}=user;
+          console.log({
+            idToken,user,email,name,photo
+          })
           if(!email.endsWith('@nu.edu.pk')){
             setIsSubmitting(false);
             setError(true);  return;}
-            console.log(email);
+            // console.log(email);
           signIn(idToken);
           // router.replace('/');
         }

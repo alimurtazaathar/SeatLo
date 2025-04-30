@@ -38,17 +38,18 @@ interface RideDetails {
 
 
 interface FormData {
-  carName: string;
-  licenseNumber: string;
-  seats: number;
+  car_id: number;
+  // licenseNumber: string;
+  total_seats: number;
 }
 
 
 interface AddRideProps {
   onSubmit: (data: FormData & { 
+    driver_id:number,
     stops: string[]; 
-    date: Date; 
-    time: { hours: number; minutes: number };
+    date: string; 
+    start_time: string;
   }) => void;
   ride:RideDetails|null;
 }
@@ -61,9 +62,9 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
     formState: { errors },reset
   } = useForm<FormData>({
     defaultValues: {
-      carName: "Toyota Prius",
-      licenseNumber: "ABC69",
-      seats: props.ride?.seats ?? 0,
+      car_id: 1,
+      // licenseNumber: "ABC69",
+      total_seats: props.ride?.seats ?? 0,
     },
   });
 
@@ -86,9 +87,9 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
   useEffect(() => {
     if (props.ride) {
       reset({
-        carName: "Toyota Prius",
-        licenseNumber: "ABC69",
-        seats: props.ride.seats ?? 0,
+        car_id:1,
+        // licenseNumber: "ABC69",
+        total_seats: props.ride.seats ?? 0,
       });
   
       setStops(props.ride.stops?.filter((stop): stop is string => stop !== null) || []);
@@ -152,38 +153,46 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
   };
 
   const destination = (
-    <View style={[styles.stopItem, { width: "90%", alignContent: 'center' }]}>
-      <Text style={{ color: "#f8ce59", fontWeight:'bold',fontSize:15, height: 20, textAlignVertical: 'center' ,letterSpacing:4}}>------ Fast NUCES ----</Text>
+    <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+      <RoadConnector height={50} isLast={true}/>
+      <View style={[styles.stopItem, { width: "90%", alignContent: 'center' }]}>
+      
+        <Text style={{ color: "#141414", fontWeight:'bold',fontSize:15, height: 20, textAlignVertical: 'center' ,letterSpacing:4}}>------ Fast NUCES ----</Text>
+      </View>
     </View>
   );
 
   const stopInputField = (
-    
-    <Pressable
-      onPress={searchStop}
-      style={[
-        styles.addButton,
-        {
-          backgroundColor: "#222",
-          width: "90%",
-          alignItems: "center",
-          marginVertical: 5,
-          borderRadius: 10,
-          padding: 10,
-        },
-      ]}
-    >
-      <Ionicons
-        name="add-outline"
-        size={15}
-        style={{
-          color: "white",
-          backgroundColor: "#8b5cf6",
-          borderRadius: 15,
-          padding: 5,
-        }}
-      />
-    </Pressable>
+    <View style={{display:'flex',alignItems:'center',flexDirection:'row',justifyContent:'space-between'}}>
+      <RoadConnector height={50}/>
+      <Pressable
+        onPress={searchStop}
+        style={[
+          styles.addButton,
+          {
+            backgroundColor: "#fff",
+            width: "90%",
+            alignItems: "center",
+            marginVertical: 5,
+            borderRadius: 10,
+            padding: 7,
+          },
+        ]}
+      >
+        <Ionicons
+          name="add-outline"
+          size={15}
+          style={{
+            color: "#fff",
+            backgroundColor: "#141414",
+            borderRadius: 15,
+            borderColor:'#141414',
+            // opacity:0.8,
+            padding: 5,
+          }}
+        />
+      </Pressable>
+    </View>
   );
   
   const renderBackdrop = useCallback(
@@ -218,7 +227,11 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
             renderItem={({ item, index }) => (
               <View style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
                 <View style={styles.connectorContainer}>
-                  <RoadConnector height={50} />
+                  <RoadConnector 
+                    height={50} 
+                    isFirst={index === 0}
+                    isLast={index === stops.length - 1}
+                  />
                 </View>
                 <View style={styles.stopItem}>
                   <Text style={styles.stopText}>{item}</Text>
@@ -275,7 +288,7 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
                 <TextInputLabel label="Number of Seats" />
                 <Controller
                   control={control}
-                  name="seats"
+                  name="total_seats"
                   rules={{ required: "Number of seats is required" }}
                   render={({ field: { onChange, value } }) => (
                     <TextInput
@@ -288,8 +301,8 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
                     />
                   )}
                 />
-                {errors.seats && (
-                  <Text style={styles.error}>{errors.seats.message}</Text>
+                {errors.total_seats && (
+                  <Text style={styles.error}>{errors.total_seats.message}</Text>
                 )}
 
                 <View style={styles.stopsHeaderContainer}>
@@ -318,7 +331,7 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
                 {!isReveresed ? destination : stopInputField}
 
                 {/* Car Name and License Number */}
-                <View style={styles.carInfoContainer}>
+                {/* <View style={styles.carInfoContainer}>
                   <TextInputLabel label="Car Name" />
                   <Controller
                     control={control}
@@ -359,7 +372,7 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
                       {errors.licenseNumber.message}
                     </Text>
                   )}
-                </View>
+                </View> */}
 
                 <Pressable
                   onPress={handleSubmit((data) => {
@@ -367,11 +380,20 @@ const AddRide = forwardRef<BottomSheet, AddRideProps>((props, ref) => {
                       alert("Please input a stop")
                     }//deal with edge cases where time is appropriate
                     else {
+                      const localDate = new Date(departureDate);
+                      localDate.setHours(hours);
+                      localDate.setMinutes(minutes);
+                      localDate.setSeconds(0);
+                      localDate.setMilliseconds(0);
+                      
+                      const utcDate = new Date(localDate.getTime() - (localDate.getTimezoneOffset() * 60000));
+                      
                       props.onSubmit({ 
+                        driver_id:1,//for now change after this
                         ...data, 
                         stops, 
-                        date: departureDate, 
-                        time: { hours, minutes }
+                        date: departureDate.toISOString().split('T')[0], 
+                        start_time:utcDate.toISOString(),
                       });
                     }
                   })}
@@ -469,7 +491,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   connectorContainer: {
-    height: 40,
+    height: 50, // Match this with the RoadConnector height
     marginRight: 5,
     alignItems: 'center',
     justifyContent: 'center',
@@ -502,19 +524,21 @@ const styles = StyleSheet.create({
   stopItem: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#2c2c2c",
+    backgroundColor: "#fff",
     alignItems: 'center',
     padding: 10,
     borderRadius: 8,
+    borderColor:'#141414',
+    borderWidth:1,
     marginVertical: 5,
     width:'90%'
   },
   stopText: {
-    color: "#f8ce59",
+    color: "#141414",
     fontWeight: 'bold',
     fontSize: 15,
     textAlign: 'center',
-    letterSpacing:4,
+    letterSpacing:3,
   },
   submitButton: {
     backgroundColor: "#141414",
