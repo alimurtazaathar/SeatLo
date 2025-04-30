@@ -86,22 +86,22 @@ const SettingsScreen = () => {
           <SettingsItem 
             title="Personal Information" 
             icon="person-outline" 
-            onPress={() => router.replace('/(app)/(home)/settings/profile')}
+            onPress={() => router.replace('/(protected)/(home)/settings/profile')}
           />
           <SettingsItem 
             title="Payment Methods" 
             icon="card-outline" 
-            onPress={() =>  router.replace('/(app)/(home)/settings/paymentmethods')}
+            onPress={() =>  router.replace('/(protected)/(home)/settings/forms/paymentmethods')}
           />
           <SettingsItem 
             title="Saved Locations" 
             icon="location-outline" 
-            onPress={() => router.replace('/(app)/(home)/settings/savedLocations')}
+            onPress={() => router.replace('/(protected)/(home)/settings/savedLocations')}
           />
           <SettingsItem 
             title="Vehicle Information" 
             icon="car-outline" 
-            onPress={() => router.replace('/(app)/(home)/settings/VehicleInfo')}
+            onPress={() => router.replace('/(protected)/(home)/settings/VehicleInfo')}
           />
         </View>
         
@@ -130,17 +130,17 @@ const SettingsScreen = () => {
           <SettingsItem 
             title="Contact Us" 
             icon="mail-outline" 
-            onPress={() =>  router.replace('/(app)/(home)/contactUS')}
+            onPress={() =>  router.replace('/(protected)/(home)/contact')}
           />
           <SettingsItem 
             title="Submit a Complaint" 
             icon="warning-outline" 
-            onPress={() =>  router.replace('/(app)/(home)/settings/profile')}
+            onPress={() =>  router.replace('/(protected)/(home)/complaint')}
           />
           <SettingsItem 
             title="FAQ" 
             icon="help-circle-outline" 
-            onPress={() =>  router.replace('/(app)/(home)/settings/profile')}
+            onPress={() =>  router.replace('/(protected)/(home)/complaint')}
           />
         </View>
         
@@ -149,12 +149,12 @@ const SettingsScreen = () => {
           <SettingsItem 
             title="Privacy Policy" 
             icon="shield-outline" 
-            onPress={() =>  router.replace('/(app)/(home)/settings/profile')}
+            onPress={() =>  router.replace('/(protected)/(home)/settings')}
           />
           <SettingsItem 
             title="Terms of Service" 
             icon="document-text-outline" 
-            onPress={() => router.replace('/(app)/(home)/settings/profile')}
+            onPress={() => router.replace('/(protected)/(home)/settings')}
           />
         </View>
       </ScrollView>

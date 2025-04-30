@@ -4,10 +4,8 @@ import CustomDrawer from "@/components/CustomDrawer";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar ,Platform,View} from "react-native";
 import { DrawerToggleButton } from "@react-navigation/drawer";
+import React from "react";
 export default function Layout() {
-
-  
-
   return (
       <GestureHandlerRootView style={{ flex: 1 }}>
     {/* {Platform.OS === "ios" && <View style={{ height: 40, backgroundColor: "#141414" }} />} */}

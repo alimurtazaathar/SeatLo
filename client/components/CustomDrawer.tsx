@@ -86,11 +86,19 @@ export default function CustomDrawer() {
           </Pressable>
         </Link>
 
+        
+        <Link href="/(protected)/(home)/ride-history" asChild>
+          <Pressable style={styles.link}>
+            <Text style={styles.linkText}>Ride History</Text>
+          </Pressable>
+        </Link>
+
         <Link href="/(protected)/(home)/settings" asChild>
           <Pressable style={styles.link}>
             <Text style={styles.linkText}>Settings</Text>
           </Pressable>
         </Link>
+
 
         <Pressable style={{ paddingVertical: 30 }} onPress={signOut}>
           <Text style={{ color: 'red', fontSize: 15, fontWeight: "bold" }}>Logout</Text>
