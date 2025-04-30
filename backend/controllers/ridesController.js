@@ -207,3 +207,54 @@ exports.createRideRequest = async (req, res) => {
   }
 };
 
+
+
+exports.viewActiveRideByDriver = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const ride = await Ride.findOne({
+      where: {
+        driver_id: userId,
+        status: 'active'
+      },
+      include: [
+        {
+          model: RideStop,
+          attributes: ['id', 'stop_name', 'stop_order']
+        },
+        {
+          model: Car,
+          attributes: ['id', 'model', 'license_plate']
+        },
+        {
+          model: RideRequest,
+          where: {
+            status: ['pending', 'accepted']
+          },
+          required: false,
+          attributes: ['id', 'passenger_id', 'stop_id', 'seats_requested', 'status', 'created_at']
+        }
+      ],
+      attributes: [
+        'id', 'driver_id', 'car_id', 'start_time', 'date',
+        'total_seats', 'available_seats', 'status', 'created_at'
+      ]
+    });
+
+    if (!ride) {
+      return res.status(404).json({ message: 'No active ride found for this driver.' });
+    }
+
+    return res.status(200).json(ride);
+  } catch (error) {
+    console.error('Error fetching active ride:', error);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
+
+
+
+
