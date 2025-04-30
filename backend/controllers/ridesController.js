@@ -164,33 +164,46 @@ exports.getRideDetails = async (req, res) => {
 };
 
 
+// controllers/ridesController.js
 exports.createRideRequest = async (req, res) => {
   try {
-    const { rideId, userId } = req.params;  // Getting rideId and userId from the URL
-    const { status } = req.body; // Getting status from the body of the request
+    const { rideId, userId } = req.params;
+    const { stop_id, seats_requested } = req.body;
 
-    // Find if the ride exists
+    // Fetch the ride to check availability
     const ride = await Ride.findByPk(rideId);
-    if (!ride) {
-      return res.status(404).json({ message: 'Ride not found' });
+    if (!ride) return res.status(404).json({ error: "Ride not found" });
+
+    // Check if enough seats are available
+    if (seats_requested > ride.available_seats) {
+      return res.status(400).json({ error: "Not enough seats available" });
     }
 
-    // Find if the user exists
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Create a new ride request
-    const rideRequest = await RideRequest.create({
-      ride_id: rideId,
-      passenger_id: userId,
-      status: status,  // Assuming status is provided in the body
+    // Prevent duplicate ride requests
+    const existingRequest = await RideRequest.findOne({
+      where: { ride_id: rideId, passenger_id: userId }
     });
 
-    // Return the created ride request
-    res.status(201).json({ message: 'Ride request created successfully', rideRequest });
+    if (existingRequest) {
+      return res.status(400).json({ error: "Duplicate request not allowed" });
+    }
+
+    // Create the ride request
+    const newRequest = await RideRequest.create({
+      ride_id: rideId,
+      passenger_id: userId,
+      stop_id,
+      seats_requested
+    });
+
+    // Optional: notify the driver
+    // await Notification.create({ user_id: ride.driver_id, message: `New ride request from user ${userId}` });
+
+    return res.status(201).json(newRequest);
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Ride request failed:", error); // This will show error in your terminal
+    return res.status(500).json({ error: "Server error" });
   }
 };
+

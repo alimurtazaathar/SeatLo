@@ -17,7 +17,7 @@ router.get('/:rideId', ridesController.getRideDetails);
 
 
 // send a ride request
-router.post('/rides/:rideId/request/:userId', ridesController.createRideRequest);
+router.post('/:rideId/request/:userId', ridesController.createRideRequest);
 
 router.post('/test', (req, res) => res.json({ message: "POST works!" }));
 
