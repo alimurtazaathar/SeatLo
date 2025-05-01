@@ -31,15 +31,15 @@ app.get('/viewusers', async (req, res) => {
 });
 
 
-// Don't sync the database, just start the server
-// (You can comment the sync code if you don't need it right now)
-// sequelize.sync({ force: false }) 
-//   .then(() => {
-//     console.log('✅ Database synced successfully!');
-//   })
-//   .catch((err) => {
-//     console.error('❌ Database sync failed:', err);
-//   });
+ //Don't sync the database, just start the server
+ //(You can comment the sync code if you don't need it right now)
+ sequelize.sync({ force: false }) 
+   .then(() => {
+     console.log('✅ Database synced successfully!');
+   })
+   .catch((err) => {
+     console.error('❌ Database sync failed:', err);
+   });
 
 // Start the server directly without syncing models
 app.listen(PORT, () => {
