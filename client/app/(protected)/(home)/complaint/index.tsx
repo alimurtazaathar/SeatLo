@@ -13,7 +13,18 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { router } from "expo-router";
 
-const ComplaintScreen = ({}) => {
+interface TripData {
+  Route: string;
+  date: string;
+  driver: string;
+}
+
+interface OptionItem {
+  label: string;
+  value: string;
+}
+
+const ComplaintScreen = () => {
   const [category, setCategory] = useState('app');
   const [severity, setSeverity] = useState('medium');
   const [tripId, setTripId] = useState('');
@@ -21,13 +32,13 @@ const ComplaintScreen = ({}) => {
   const [submitting, setSubmitting] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showSeverityDropdown, setShowSeverityDropdown] = useState(false);
-  const [recentTrips, setRecentTrips] = useState([
+  const [recentTrips, setRecentTrips] = useState<TripData[]>([
     { Route: 'Mochi-Morh-GC-Millenium-Fast', date: '2025-04-15', driver: 'Abdurrahman'},
     { Route: 'Disco-GC-millenium-Fast', date: '2025-04-12', driver: 'Ali' },
     { Route: 'North-GC-Millenium-Fast', date: '2025-04-09', driver: 'Hamza' },
   ]);
 
-  const categoryOptions = [
+  const categoryOptions: OptionItem[] = [
     { label: 'App Issue', value: 'app' },
     { label: 'Driver Behavior', value: 'driver' },
     { label: 'Vehicle Condition', value: 'vehicle' },
@@ -35,14 +46,14 @@ const ComplaintScreen = ({}) => {
     { label: 'Safety Concern', value: 'safety' },
   ];
 
-  const severityOptions = [
+  const severityOptions: OptionItem[] = [
     { label: 'Low', value: 'low' },
     { label: 'Medium', value: 'medium' },
     { label: 'High', value: 'high' },
     { label: 'Critical', value: 'critical' },
   ];
 
-  const handleTripSelect = (id:any) => {
+  const handleTripSelect = (id: string) => {
     setTripId(id);
   };
 
@@ -50,51 +61,51 @@ const ComplaintScreen = ({}) => {
     Alert.alert('Feature', 'Photo upload would be implemented here');
   };
 
-  const handleSelectCategory = (value:any) => {
+  const handleSelectCategory = (value: string) => {
     setCategory(value);
     setShowCategoryDropdown(false);
   };
 
-  const handleSelectSeverity = (value:any) => {
+  const handleSelectSeverity = (value: string) => {
     setSeverity(value);
     setShowSeverityDropdown(false);
   };
 
       
-      const handleSubmit = () => {
-        if (!category || !description) {
-          Alert.alert('Error', 'Please fill in all required fields');
-          return;
-        }
+  const handleSubmit = () => {
+    if (!category || !description) {
+      Alert.alert('Error', 'Please fill in all required fields');
+      return;
+    }
+
+    setSubmitting(true);
     
-        setSubmitting(true);
-        
-        // Simulate API call
-        setTimeout(() => {
-          setSubmitting(false);
+    // Simulate API call
+    setTimeout(() => {
+      setSubmitting(false);
+      
+      // Generate a random complaint ID
+      const complaintId = 'C' + Math.floor(100000 + Math.random() * 900000);
+      
+      Alert.alert(
+        'Complaint Submitted',
+        `Your complaint has been registered with ID: ${complaintId}. We'll investigate and get back to you within 48 hours.`,
+        [{ text: 'OK', onPress: () => {
+          // Reset form
+          setCategory('app');
+          setSeverity('medium');
+          setTripId('');
+          setDescription('');
           
-          // Generate a random complaint ID
-          const complaintId = 'C' + Math.floor(100000 + Math.random() * 900000);
           
-          Alert.alert(
-            'Complaint Submitted',
-            `Your complaint has been registered with ID: ${complaintId}. We'll investigate and get back to you within 48 hours.`,
-            [{ text: 'OK', onPress: () => {
-              // Reset form
-              setCategory('app');
-              setSeverity('medium');
-              setTripId('');
-              setDescription('');
-              
-              
-              router.replace("/complaint");
-            }}]
-          );
-        }, 1500);
-      };
+          router.replace("/complaint");
+        }}]
+      );
+    }, 1500);
+  };
 
   // Helper function to get label from value
-  const getLabelFromValue = (options:any, value:any) => {
+  const getLabelFromValue = (options: OptionItem[], value: string): string => {
     const option = options.find(opt => opt.value === value);
     return option ? option.label : '';
   };
@@ -383,7 +394,7 @@ const styles = StyleSheet.create({
   },
   tripItemSelected: {
     backgroundColor: '#E6EFFD',
-    borderColor: '#4A80F0',
+    borderColor: '#8b5cf6',
     borderWidth: 1,
   },
   tripId: {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useLocalSearchParams } from 'expo-router';
 
 interface UserProfile {
   fullName: string;
@@ -24,22 +25,38 @@ interface UserProfile {
   profileImage: string | null;
 }
 
-const initialProfile: UserProfile = {
-  fullName: 'John Doe',
-  email: 'john.doe@example.com',
-  phoneNumber: '+1 555-123-4567',
-  gender: 'Male',
-  profileImage: null // Default to null, could be a URL string
-};
+// Define props interface for the component
+interface EditProfileScreenProps {
+  navigation: any;
+}
 
 const genderOptions = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
 
-export default function EditProfileScreen({ navigation }: any) {
-  const [profile, setProfile] = useState<UserProfile>(initialProfile);
+export default function EditProfileScreen({ navigation }: EditProfileScreenProps) {
+  const params = useLocalSearchParams();
+  
+  // Parse the user information from params
+  const userInfo = params.userInfo ? JSON.parse(params.userInfo as string) : {};
+  
+  // Initialize profile with values from params
+  const [profile, setProfile] = useState<UserProfile>({
+    fullName: userInfo.fullName || 'John Doe',
+    email: userInfo.email || 'john.doe@example.com',
+    phoneNumber: '+1 555-123-4567', // Default since this may not be in params
+    gender: 'Male', // Default since this may not be in params
+    profileImage: userInfo.profileImage || null
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [showGenderModal, setShowGenderModal] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPhoneValid, setIsPhoneValid] = useState(true);
+
+  // Set initial validation states based on profile values
+  useEffect(() => {
+    setIsEmailValid(validateEmail(profile.email));
+    setIsPhoneValid(validatePhone(profile.phoneNumber));
+  }, []);
 
   // Validation functions
   const validateEmail = (email: string) => {
@@ -317,7 +334,6 @@ export default function EditProfileScreen({ navigation }: any) {
     </KeyboardAvoidingView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -374,9 +390,11 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingHorizontal: 24,
+    width: '100%', // Ensure container takes full width
   },
   inputGroup: {
     marginBottom: 24,
+    width: '100%', // Ensure input group takes full width
   },
   label: {
     fontSize: 14,
@@ -389,13 +407,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#222222',
     borderRadius: 8,
-    paddingHorizontal: 16,
+    width: '100%', // Ensure input container takes full width // Add border for better visibility
+    borderColor: '#333333', // Subtle border color
   },
   input: {
     flex: 1,
     height: 50,
-    color: '#FFFFFF',
+    color: 'white',
     fontSize: 16,
+    width: '100%', // Ensure input takes full width
+    backgroundColor: '#222222', // Match background for autofill consistency
+    borderRadius:8,
+    paddingLeft:10,
   },
   inputError: {
     borderWidth: 1,
@@ -417,6 +440,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     height: 50,
+    width: '100%', // Ensure gender selector takes full width
+    borderWidth: 1, // Add border for consistency with other inputs
+    borderColor: '#333333',
   },
   genderText: {
     color: '#FFFFFF',
@@ -430,6 +456,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 32,
     marginBottom: 48,
+    width: '100%', // Make button take full available width
+    maxWidth: '100%', // Limit max width to prevent overflow
+    alignSelf: 'center', // Center the button
   },
   saveButtonText: {
     color: '#FFFFFF',
@@ -484,5 +513,10 @@ const styles = StyleSheet.create({
   selectedGenderOptionText: {
     fontWeight: '600',
     color: '#8b5cf6',
+  },
+  // Add a focused input state style
+  inputFocused: {
+    borderColor: '#8b5cf6',
+    borderWidth: 1,
   },
 });

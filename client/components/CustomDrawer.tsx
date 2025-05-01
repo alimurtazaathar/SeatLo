@@ -1,16 +1,18 @@
 import { View, Text, Pressable, StyleSheet, Image, TextInput } from "react-native";
 import { useState } from "react";
-import { Link } from "expo-router";
+import { Link, Href, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native";
 import { useSession } from "@/utils/ctx";
 import * as ImagePicker from 'expo-image-picker';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function CustomDrawer() {
   const { signOut } = useSession();
+  const router = useRouter();
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [userName, setUserName] = useState("Mazdoor Bhai");
   const [isEditingName, setIsEditingName] = useState(false);
+  const userEmail = "k224150@nu.edu.pk";
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -25,8 +27,22 @@ export default function CustomDrawer() {
     }
   };
 
+  // Function to navigate to profile screen with user data
+  const navigateToProfile = () => {
+    router.push({
+      pathname: "/(protected)/(home)/profile",
+      params: {
+        userInfo: JSON.stringify({
+          fullName: userName,
+          email: userEmail,
+          profileImage: profileImage
+        })
+      }
+    });
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       {/* Profile section */}
       <View style={styles.profileSection}>
         <Pressable onPress={pickImage} style={styles.imageContainer}>
@@ -59,60 +75,87 @@ export default function CustomDrawer() {
             </Pressable>
           )}
           <Pressable onPress={() => setIsEditingName((prev) => !prev)} style={styles.nameEditIcon}>
-            <Ionicons name="create-outline" size={16} color="#fff" />
+            <Ionicons name="create-outline" size={16} color="#8b5cf6" />
           </Pressable>
         </View>
 
-        <Text style={styles.profileEmail}>k224150@nu.edu.pk</Text>
+        <Text style={styles.profileEmail}>{userEmail}</Text>
       </View>
 
       {/* Navigation Links */}
-      <View style={{ padding: 20, paddingTop: 30, marginBottom: 'auto' }}>
-        <Link href="/(protected)/(home)" asChild>
-          <Pressable>
-            <Text style={styles.linkText}>Home</Text>
-          </Pressable>
-        </Link>
-
-        <Link href="/(protected)/(home)/complaint" asChild>
-          <Pressable style={styles.link}>
-            <Text style={styles.linkText}>Complaint</Text>
-          </Pressable>
-        </Link>
-
-        <Link href="/(protected)/(home)/contact" asChild>
-          <Pressable style={styles.link}>
-            <Text style={styles.linkText}>Contact Us</Text>
-          </Pressable>
-        </Link>
-
-        
-        <Link href="/(protected)/(home)/ride-history" asChild>
-          <Pressable style={styles.link}>
-            <Text style={styles.linkText}>Ride History</Text>
-          </Pressable>
-        </Link>
-
-        <Link href="/(protected)/(home)/settings" asChild>
-          <Pressable style={styles.link}>
-            <Text style={styles.linkText}>Settings</Text>
-          </Pressable>
-        </Link>
-
-
-        <Pressable style={{ paddingVertical: 30 }} onPress={signOut}>
-          <Text style={{ color: 'red', fontSize: 15, fontWeight: "bold" }}>Logout</Text>
+      <View style={styles.navContainer}>
+        <NavItem 
+          href="/(protected)/(home)" 
+          icon="home-outline" 
+          label="Home" 
+        />
+        <Pressable style={styles.navItem} onPress={navigateToProfile}>
+          <Ionicons name="person" size={22} color="#8b5cf6" />
+          <Text style={styles.navText}>Profile</Text>
         </Pressable>
+        <NavItem 
+          href="/(protected)/(home)/complaint" 
+          icon="alert-circle-outline" 
+          label="Complaint" 
+        />
+        <NavItem 
+          href="/(protected)/(home)/contact" 
+          icon="mail-outline" 
+          label="Contact Us" 
+        />
+        <NavItem 
+          href="/(protected)/(home)/ratings" 
+          icon="star-outline" 
+          label="My Ratings" 
+        />
+        <NavItem 
+          href="/(protected)/(home)/ride-history" 
+          icon="time-outline" 
+          label="Ride History" 
+        />
+        <NavItem 
+          href="/(protected)/(home)/settings" 
+          icon="settings-outline" 
+          label="Settings" 
+        />
       </View>
+
+      {/* Logout Button */}
+      <Pressable style={styles.logoutButton} onPress={signOut}>
+        <MaterialCommunityIcons name="logout" size={20} color="#ef4444" />
+        <Text style={styles.logoutText}>Logout</Text>
+      </Pressable>
     </SafeAreaView>
   );
 }
 
+// Use Href type from expo-router instead of custom ValidRoutes
+interface NavItemProps {
+  href: Href;
+  icon: string;
+  label: string;
+}
+
+const NavItem = ({ href, icon, label }: NavItemProps) => (
+  <Link href={href} asChild>
+    <Pressable style={styles.navItem}>
+      <Ionicons name={icon as any} size={22} color="#8b5cf6" />
+      <Text style={styles.navText}>{label}</Text>
+    </Pressable>
+  </Link>
+);
+
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#141414',
+  },
   profileSection: {
     alignItems: 'center',
-    paddingVertical: 40,
+    paddingVertical: 15,
     backgroundColor: '#222222',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
   },
   imageContainer: {
     position: 'relative',
@@ -122,47 +165,76 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: '#8b5cf6',
   },
   editIconContainer: {
     position: 'absolute',
     bottom: 0,
-    right: -10,
-    backgroundColor: '#4A80F0',
-    borderRadius: 10,
-    padding: 3,
+    right: 0,
+    backgroundColor: '#8b5cf6',
+    borderRadius: 12,
+    padding: 5,
+    borderWidth: 2,
+    borderColor: '#222222',
   },
   nameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 15,
   },
   profileName: {
-    fontSize: 18,
-    color: '#fff',
+    fontSize: 20,
+    color: '#f8fafc',
     fontWeight: 'bold',
   },
   nameInput: {
-    fontSize: 18,
-    color: '#fff',
+    fontSize: 20,
+    color: '#f8fafc',
     borderBottomWidth: 1,
-    borderBottomColor: '#fff',
-    minWidth: 120,
+    borderBottomColor: '#8b5cf6',
+    minWidth: 150,
     padding: 2,
+    textAlign: 'center',
   },
   nameEditIcon: {
     marginLeft: 8,
   },
   profileEmail: {
     fontSize: 14,
-    color: '#e0e0e0',
+    color: '#94a3b8',
+    marginTop: 5,
   },
-  link: {
-    paddingVertical: 10,
+  navContainer: {
+    flex: 1,
+    paddingTop: 30,
+    paddingHorizontal: 20,
   },
-  linkText: {
+  navItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
+  },
+  navText: {
     fontSize: 16,
-    color: 'black',
-    fontWeight: "bold",
-  }
+    color: '#f8fafc',
+    marginLeft: 15,
+    fontWeight: '500',
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 0,
+    marginHorizontal: 20,
+    paddingBottom:40
+  },
+  logoutText: {
+    color: '#ef4444',
+    fontSize: 16,
+    fontWeight: '500',
+    borderBottomColor: '#333333',
+    marginLeft:15,
+    
+  },
 });

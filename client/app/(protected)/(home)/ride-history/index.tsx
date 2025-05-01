@@ -14,7 +14,6 @@ interface RideData {
   route:string;
   driver: string;
   passenger?: string; // Added for driver's perspective
-  price: string;
   status: 'completed' | 'canceled';
   avatarUrl: string;
   role: 'driver' | 'passenger'; // Added to distinguish between roles
@@ -31,7 +30,6 @@ export default function RideHistoryScreen({ navigation }: RideHistoryScreenProps
       time: '8:30 AM',
       route:'Mochi Morh - GC - Millinium - Fast',
       driver: 'John Smith',
-      price: '$12.50',
       status: 'completed',
       avatarUrl: 'https://via.placeholder.com/40',
       role: 'passenger'
@@ -42,7 +40,6 @@ export default function RideHistoryScreen({ navigation }: RideHistoryScreenProps
       time: '5:45 PM',
       route:'Disco Bakery - Milliium - Drigh rd - Fast',
       driver: 'Sarah Johnson',
-      price: '$13.25',
       status: 'completed',
       avatarUrl: 'https://via.placeholder.com/40',
       role: 'passenger'
@@ -55,7 +52,6 @@ export default function RideHistoryScreen({ navigation }: RideHistoryScreenProps
       route: 'north nazimabad - aysha manzil - gc - fast',
       driver: 'You',
       passenger: 'Mike Anderson',
-      price: '$18.75',
       status: 'completed',
       avatarUrl: 'https://via.placeholder.com/40',
       role: 'driver'
@@ -67,7 +63,6 @@ export default function RideHistoryScreen({ navigation }: RideHistoryScreenProps
       route: 'north nazimabad - aysha manzil - gc - fast',
       driver: 'You',
       passenger: 'Lisa Chen',
-      price: '$17.50',
       status: 'completed',
       avatarUrl: 'https://via.placeholder.com/40',
       role: 'driver'
@@ -78,7 +73,6 @@ export default function RideHistoryScreen({ navigation }: RideHistoryScreenProps
       time: '3:30 PM',
       route: 'north nazimabad - aysha manzil - gc - fast',
       driver: 'Robert Davis',
-      price: '$8.25',
       status: 'canceled',
       avatarUrl: 'https://via.placeholder.com/40',
       role: 'passenger'
@@ -208,11 +202,13 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 16,
+    alignItems:'center',
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#8b5cf6',
+
   },
   roleToggleContainer: {
     flexDirection: 'row',

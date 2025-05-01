@@ -16,6 +16,9 @@ export default function Layout() {
               <Drawer.Screen name="complaint" options={{headerTitle:'Complaint'}}/>
               <Drawer.Screen name="settings" options={{headerTitle:'Settings'}}/>
               <Drawer.Screen name="ride-history" options={{headerTitle:'Ride History'}}/>
+              <Drawer.Screen name="ratings" options={{headerTitle:'Ratings'}}/>
+              <Drawer.Screen name="profile" options={{headerTitle:'Profile'}}/>
+              
             </Drawer>
       </GestureHandlerRootView>
   );
