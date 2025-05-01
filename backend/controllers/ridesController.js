@@ -102,37 +102,37 @@ exports.getAllRides = async (req, res) => {
 // Controller function to get ride details
 exports.getRideDetails = async (req, res) => {
   try {
-    const rideId = req.params.rideId; // Assuming rideId is passed as a URL parameter
+    const rideId = req.params.rideId;
 
     const ride = await Ride.findOne({
       where: { id: rideId },
       include: [
         {
-          model: User, // Including the driver (user)
-          attributes: ['name', 'profile_picture'], // Including the driver's name and profile picture
+          model: User,
+          attributes: ['name', 'profile_picture'],
         },
         {
-          model: RideStop, // Including ride stops (sorted by stop order)
-          attributes: ['stop_name', 'stop_order'],
+          model: RideStop,
+          attributes: ['id', 'stop_name', 'stop_order'],
         },
         {
-          model: Car, // Including car details
+          model: Car,
           attributes: ['model', 'color', 'license_plate'],
         },
         {
-          model: RideRequest, // Including ride requests to check if the user has requested this ride
+          model: RideRequest,
           where: { status: 'accepted' },
-          required: false, // Makes the join optional (if no request exists for this ride)
-          attributes: ['id', 'passenger_id', 'status'], // Get the request status and passenger details
+          required: false,
+          attributes: ['id', 'passenger_id', 'status'],
           include: [
             {
-              model: User, // Including user details of the passenger
-              attributes: ['name'], // Get the passenger's name
+              model: User,
+              attributes: ['name'],
             },
           ],
         },
       ],
-      attributes: ['start_time', 'date', 'total_seats', 'available_seats'], // Including ride-specific details
+      attributes: ['id', 'start_time', 'date', 'total_seats', 'available_seats'],
     });
 
     if (!ride) {
@@ -146,22 +146,29 @@ exports.getRideDetails = async (req, res) => {
       date: ride.date,
       total_seats: ride.total_seats,
       available_seats: ride.available_seats,
-      driver: ride.User, // Driver details
-      car: ride.Car, // Car details
-      stops: ride.RideStops.sort((a, b) => a.stop_order - b.stop_order).map(stop => stop.stop_name), // Sorted stops
-      ride_request: ride.RideRequests.length > 0 ? {
-        status: ride.RideRequests[0].status, // Request status
-        passenger_name: ride.RideRequests[0].User.name, // Passenger's name
-      } : null, // If no request, set it as null
+      driver: ride.User,
+      car: ride.Car,
+      stops: ride.RideStops
+        .sort((a, b) => a.stop_order - b.stop_order)
+        .map(stop => ({
+          id: stop.id,
+          stop_name: stop.stop_name,
+          stop_order: stop.stop_order
+        })),
+      request_status: ride.RideRequests.length > 0 ? {
+        status: ride.RideRequests[0].status,
+        passenger_name: ride.RideRequests[0].User.name,
+      } : null,
     };
 
-    res.status(200).json(rideDetails); // Return the ride details
+    res.status(200).json(rideDetails);
 
   } catch (error) {
-    console.error(error); // Log the error for debugging
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 // controllers/ridesController.js
